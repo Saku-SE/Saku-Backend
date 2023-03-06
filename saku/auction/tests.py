@@ -124,7 +124,7 @@ class GetAuctionTest(APITestCase):
             **{
                 "created_at": "2020-08-24T14:15:22Z",
                 "name": "auction2",
-                "finished_at": "2022-08-24T14:15:22Z",
+                "finished_at": "2024-08-24T14:15:22Z",
                 "mode": 1,
                 "limit": 0,
                 "is_private": False,
