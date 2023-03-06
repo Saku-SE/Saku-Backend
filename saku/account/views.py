@@ -28,13 +28,13 @@ class Register(generics.GenericAPIView):
         username = serializer.data.get("username")
         email = serializer.data.get("email")
         randomcode = random.randrange(1000, 9999)
-        send_mail(
-            "Verify Email",
-            f"Hi {username}!\nYour verification code is: {randomcode}",
-            EMAIL_HOST_USER,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+        # send_mail(
+        #     "Verify Email",
+        #     f"Hi {username}!\nYour verification code is: {randomcode}",
+        #     EMAIL_HOST_USER,
+        #     recipient_list=[email],
+        #     fail_silently=False,
+        # )
         return Response({"code": randomcode}, status=status.HTTP_200_OK)
 
 
@@ -96,13 +96,13 @@ class ForgotPassword(generics.GenericAPIView):
             new_password = User.objects.make_random_password()
             user.set_password(new_password)
             user.save()
-            send_mail(
-                "New Password",
-                f"Hi {user.username}!\nYour new password is: {new_password}",
-                EMAIL_HOST_USER,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
+            # send_mail(
+            #     "New Password",
+            #     f"Hi {user.username}!\nYour new password is: {new_password}",
+            #     EMAIL_HOST_USER,
+            #     recipient_list=[user.email],
+            #     fail_silently=False,
+            # )
             response = {
                 "status": "success",
                 "code": status.HTTP_200_OK,
