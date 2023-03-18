@@ -7,6 +7,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+import environ
 from pathlib import Path
 from datetime import timedelta
 
@@ -24,6 +25,10 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Application definition
 
@@ -90,6 +95,16 @@ DATABASES = {
         "PASSWORD": "saku1234",
         "HOST": os.getenv("DB_HOST", "db"),
         "PORT": "5432",
+        # "NAME": os.getenv("DB_NAME", "saku-db"),
+        # "USER": os.getenv("DB_USER", "postgres"),
+        # "PASSWORD": os.getenv("DB_PASSWORD", "saku1234"),
+        # "HOST": os.getenv("DB_HOST", "db"),
+        # "PORT": os.getenv("DB_PORT", "5432"),
+        # "NAME": env('DB_NAME'),
+        # "USER": env('DB_USER'),
+        # "PASSWORD": env('DB_PASSWORD'),
+        # "HOST": env('DB_HOST'),
+        # "PORT": env('DB_PORT'),
     },
     "local": {"ENGINE": "django.db.backends.sqlite3", "NAME": "./saku.db"},
 }
