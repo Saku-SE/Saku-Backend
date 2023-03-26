@@ -2,6 +2,7 @@ from django_filters import rest_framework as filters
 # from django.db.models import Transform
 from distutils.util import strtobool
 from datetime import datetime
+from auction.models import Auction
 
 # TODO:
 # should change when mode handling changes in Auction model
@@ -16,22 +17,24 @@ class AuctionListFilter(filters.FilterSet):
     mode = filters.NumberFilter(method='mode__exact')
     # mode = filters.TypedChoiceFilter(choices=int_choices, coerce=int)
     category = filters.CharFilter(field_name="category__name", lookup_expr="exact")
-    tag = filters.CharFilter(field_name="tags", lookup_expr="in")
+    # tag = filters.CharFilter(field_name="tags", lookup_expr="in")
+    tag = filters.CharFilter(method="tags__in")
     # finished = fil
     # limit = filters.NumberFilter(field_name="limit", lookup_expr="gte")
     limit = filters.NumberFilter(method="limit__gte")
     # int(limit)
+    finished = filters.Filter(method="finished__tf")
 
     def mode__exact(self, queryset, value, *args, **kwargs):
         try:
-            queryset = queryset.filter(mode=int(args)) if args else queryset
+            queryset = queryset.filter(mode=int(args[0])) if args else queryset
         except ValueError:
             pass
         return queryset
     
     def limit__gte(self, queryset, value, *args, **kwargs):
         try:
-            queryset = queryset.filter(limit__gte=int(args)) if args else queryset
+            queryset = queryset.filter(limit__gte=int(args[0])) if args else queryset
         except ValueError:
             pass
         return queryset
@@ -39,7 +42,7 @@ class AuctionListFilter(filters.FilterSet):
     def finished__tf(self, queryset, value, *args, **kwargs):
         try:
             if args:
-                is_finished = strtobool(args)
+                is_finished = strtobool(args[0])
                 if is_finished:
                     queryset = queryset.filter(finished_at__lt=datetime.now())
                 else:
@@ -47,3 +50,18 @@ class AuctionListFilter(filters.FilterSet):
         except ValueError:
             pass
         return queryset
+    
+    def tags__in(self, queryset, value, *args, **kwargs):
+        try:
+            if args:
+                tags = args[0].split(',')
+                queryset = queryset.filter(tags__in=tags)
+        except ValueError:
+            pass
+        return queryset
+    
+    class Meta:
+        model = Auction
+        # pass
+        # fields = '__all__'
+        fields = ['username', 'name', 'mode', 'category', 'tag', 'limit', 'finished']

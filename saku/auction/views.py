@@ -23,7 +23,7 @@ class CreateListAuction(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Auction.objects.order_by("finished_at")
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = [filters.DjangoFilterBackend]
     filterset_class = AuctionListFilter
 
     @swagger_auto_schema(
@@ -90,6 +90,7 @@ class CreateListAuction(generics.ListCreateAPIView):
     )
     def get(self, request, *args, **kwargs):
         auctions = self.get_queryset()
+        auctions = self.filter_queryset(auctions)
         serializer = GetAuctionRequestSerializer(
             auctions, many=True, context={"request": request}
         )
