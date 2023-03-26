@@ -15,11 +15,16 @@ from saku.serializers import (
 from rest_framework.permissions import IsAuthenticated
 from auction.models import Auction, Category, Tags
 from datetime import datetime
+from django_filters import rest_framework as filters
+from auction.filters import AuctionListFilter
 
 
 class CreateListAuction(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Auction.objects.order_by("finished_at")
+
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = AuctionListFilter
 
     @swagger_auto_schema(
         responses={
@@ -43,37 +48,37 @@ class CreateListAuction(generics.ListCreateAPIView):
 
     def get_queryset(self):
         auctions = Auction.objects.order_by("-created_at")
-        if self.request.method == 'GET':
-            username = self.request.GET.get('username')
-            if username:
-                auctions = auctions.filter(user__username=username)
+        # if self.request.method == 'GET':
+        #     username = self.request.GET.get('username')
+        #     if username:
+        #         auctions = auctions.filter(user__username=username)
 
-            name = self.request.GET.get('name')
-            if name:
-                auctions = auctions.filter(name__contains=name)
+        #     name = self.request.GET.get('name')
+        #     if name:
+        #         auctions = auctions.filter(name__contains=name)
 
-            mode = self.request.GET.get('mode')
-            if mode:
-                auctions = auctions.filter(mode=int(mode))
+        #     mode = self.request.GET.get('mode')
+        #     if mode:
+        #         auctions = auctions.filter(mode=int(mode))
 
-            category = self.request.GET.get('category')
-            if category:
-                auctions = auctions.filter(category__name=category)
+        #     category = self.request.GET.get('category')
+        #     if category:
+        #         auctions = auctions.filter(category__name=category)
 
-            tag = self.request.GET.get('tag')
-            if tag:
-                auctions = auctions.filter(tags__in=tag)
+        #     tag = self.request.GET.get('tag')
+        #     if tag:
+        #         auctions = auctions.filter(tags__in=tag)
 
-            finished = self.request.GET.get('finished')
-            if finished and finished == "true":
-                auctions = auctions.filter(finished_at__lt=datetime.now())
+        #     finished = self.request.GET.get('finished')
+        #     if finished and finished == "true":
+        #         auctions = auctions.filter(finished_at__lt=datetime.now())
 
-            elif finished and finished == "false":
-                auctions = auctions.filter(finished_at__gte=datetime.now())
+        #     elif finished and finished == "false":
+        #         auctions = auctions.filter(finished_at__gte=datetime.now())
 
-            limit = self.request.GET.get('limit')
-            if limit:
-                auctions = auctions.filter(limit__gte=int(limit))
+        #     limit = self.request.GET.get('limit')
+        #     if limit:
+        #         auctions = auctions.filter(limit__gte=int(limit))
 
         return auctions
 
