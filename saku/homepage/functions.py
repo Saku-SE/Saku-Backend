@@ -1,5 +1,4 @@
-from django.db.models import Sum, Count, F
-from django.db.models.query import QuerySet
+from django.db.models import Sum, Count
 from auction.models import Auction
 from bid.models import Bid
 
@@ -136,7 +135,7 @@ def get_expense_list(all_user_bids, all_auctions):
     return expense_list
 
 
-def get_expense(user, all_user_bids, all_auctions):
+def get_expense(all_user_bids, all_auctions):
     expense = 0
     for user_bid in all_user_bids:
         if all_auctions.filter(best_bid=user_bid).exists():
