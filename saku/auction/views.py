@@ -161,13 +161,9 @@ class DeleteAuctionPicture(generics.GenericAPIView):
 
     def post(self, request, token):
         instance = self.get_object()
-        if instance.auction_image:
-            try:
-                os.remove(instance.auction_image.path)
-            except:
-                pass
-            instance.auction_image = None
-            instance.save()
+        instance.auction_image.delete(save=False)
+        # instance.auction_image = None
+        instance.save()
         return Response(
             {"message": "Auction picture deleted"}, status=status.HTTP_200_OK
         )
