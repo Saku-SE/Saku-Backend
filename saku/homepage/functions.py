@@ -1,4 +1,5 @@
 from django.db.models import Sum, Count, F
+from django.db.models.query import QuerySet
 from auction.models import Auction
 from bid.models import Bid
 
@@ -40,9 +41,9 @@ def get_last_auctions_participated(user, all_user_bids):
         if len(auctions) == 5:
             break
         if user_bid.auction.pk not in auctions:
-            auction = user_bid.auction
+            auction: Auction = user_bid.auction
             auctions.add(auction.pk)
-            best_bid = auction.best_bid
+            best_bid: Bid = auction.best_bid
             if best_bid == None:
                 success = success_choices[2]
             else:
@@ -151,33 +152,34 @@ def get_expense(user, all_user_bids, all_auctions):
     return expense
 
 
+def get_auction_participate_count(user, all_bids, auction_mode):
+    auction_participate = set()
+    all_user_bids = all_bids.filter(user=user, auction__mode=auction_mode)
+    for user_bid in all_user_bids:
+        auction_participate.add(user_bid.auction)
+    return len(auction_participate)
+
+def get_auction_create_count(user, all_auctions, auction_mode):
+    return all_auctions.filter(user=user, mode=auction_mode).count()
+
 # - tedad auction mode 1 sherkat karde
 def get_auction1_participate_count(user, all_bids):
-    auction1_participate = set()
-    all_user_bids = all_bids.filter(user=user, auction__mode=1)
-    for user_bid in all_user_bids:
-        auction1_participate.add(user_bid.auction)
-    return len(auction1_participate)
+    return get_auction_participate_count(user, all_bids, 1)
 
 
 # - tedad auction mode 1 ijad karde
 def get_auction1_create_count(user, all_auctions):
-    return all_auctions.filter(user=user, mode=1).count()
+    return get_auction_create_count(user, all_auctions, 1)
 
 
 # - tedad auction mode 2 sherkat karde
 def get_auction2_participate_count(user, all_bids):
-    auction2_participate = set()
-    all_user_bids = all_bids.filter(user=user, auction__mode=2)
-    ### make better
-    for user_bid in all_user_bids:
-        auction2_participate.add(user_bid.auction.pk)
-    return len(auction2_participate)
+    return get_auction_participate_count(user, all_bids, 2)
 
 
 # - tedad auction mode 2 ijad karde
 def get_auction2_create_count(user, all_auctions):
-    return all_auctions.filter(user=user, mode=2).count()
+    return get_auction_create_count(user, all_auctions, 1)
 
 
 # - payam haye akhir
