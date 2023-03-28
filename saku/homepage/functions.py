@@ -85,10 +85,8 @@ def get_last_auctions_created(all_user_auctions):
 
 # - list daramad ha
 def get_income_list(user, all_auctions):
-    income_list = []
     auctions = all_auctions.filter(user=user, best_bid__isnull=False)
-    for auction in auctions:
-        income_list.append(auction.best_bid.price)
+    income_list = [auction.best_bid.price for auction in auctions]
     return income_list
 
 
@@ -186,12 +184,10 @@ def get_last_chats(user):
 # - list az:
 #   - hazine, daramad -> entekhabe sal
 def get_yearly_income_list(user, year, all_auctions):
-    income_list = []
     auctions = all_auctions.filter(
         user=user, finished_at__year=year, best_bid__isnull=False
     )
-    for auction in auctions:
-        income_list.append(auction.best_bid.price)
+    income_list = [auction.best_bid.price for auction in auctions]
     return income_list
 
 
