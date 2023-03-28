@@ -3,16 +3,16 @@ from auction.models import Auction
 from bid.models import Bid
 
 # - daramad
-def get_income(user):
-    income = Auction.objects.filter(user=user, best_bid__isnull=False).aggregate(
+def get_income(user, all_auctions):
+    income = all_auctions.filter(user=user, best_bid__isnull=False).aggregate(
         Sum("best_bid__price")
     )["best_bid__price__sum"]
     return 0 if income == None else income
 
 
 # - tedad auction movafagh (best_bid.user=user and finished_at > datetime.now)
-def get_seccussfull_auction_count(user):
-    return Auction.objects.filter(best_bid__user=user).count()
+def get_seccussfull_auction_count(user, all_auctions):
+    return all_auctions.filter(best_bid__user=user).count()
 
 
 # - participant num on my auctions
@@ -83,9 +83,9 @@ def get_last_auctions_created(all_user_auctions):
 
 
 # - list daramad ha
-def get_income_list(user):
+def get_income_list(user, all_auctions):
     income_list = []
-    auctions = Auction.objects.filter(user=user, best_bid__isnull=False)
+    auctions = all_auctions.filter(user=user, best_bid__isnull=False)
     for auction in auctions:
         income_list.append(auction.best_bid.price)
     return income_list
@@ -116,9 +116,9 @@ def get_your_colaberation_count(all_user_bids, all_user_auctions):
 
 
 # - list moshahede afrad az my auction
-def get_others_colaberation_list(user):
+def get_others_colaberation_list(user, all_bids):
     colaberation_count = (
-        Bid.objects.filter(auction__user=user)
+        all_bids.filter(auction__user=user)
         .values("time__date")
         .annotate(count=Count("id"))
         .order_by("time__date")
@@ -130,45 +130,45 @@ def get_others_colaberation_list(user):
     return colaberation_list
 
 
-def get_others_colaberation_count(user):
-    return Bid.objects.filter(auction__user=user).count()
+def get_others_colaberation_count(user, all_bids):
+    return all_bids.filter(auction__user=user).count()
 
 
 # - list hazine ha
-def get_expense_list(user, all_user_bids):
+def get_expense_list(user, all_user_bids, all_auctions):
     expense_list = []
     for user_bid in all_user_bids:
-        if Auction.objects.filter(best_bid=user_bid).exists():
+        if all_auctions.filter(best_bid=user_bid).exists():
             expense_list.append(user_bid.price)
     return expense_list
 
 
-def get_expense(user, all_user_bids):
+def get_expense(user, all_user_bids, all_auctions):
     expense = 0
     for user_bid in all_user_bids:
-        if Auction.objects.filter(best_bid=user_bid).exists():
+        if all_auctions.filter(best_bid=user_bid).exists():
             expense += user_bid.price
     return expense
 
 
 # - tedad auction mode 1 sherkat karde
-def get_auction1_participate_count(user):
+def get_auction1_participate_count(user, all_bids):
     auction1_participate = set()
-    all_user_bids = Bid.objects.filter(user=user, auction__mode=1)
+    all_user_bids = all_bids.filter(user=user, auction__mode=1)
     for user_bid in all_user_bids:
         auction1_participate.add(user_bid.auction)
     return len(auction1_participate)
 
 
 # - tedad auction mode 1 ijad karde
-def get_auction1_create_count(user):
-    return Auction.objects.filter(user=user, mode=1).count()
+def get_auction1_create_count(user, all_auctions):
+    return all_auctions.filter(user=user, mode=1).count()
 
 
 # - tedad auction mode 2 sherkat karde
-def get_auction2_participate_count(user):
+def get_auction2_participate_count(user, all_bids):
     auction2_participate = set()
-    all_user_bids = Bid.objects.filter(user=user, auction__mode=2)
+    all_user_bids = all_bids.filter(user=user, auction__mode=2)
     ### make better
     for user_bid in all_user_bids:
         auction2_participate.add(user_bid.auction.pk)
@@ -176,8 +176,8 @@ def get_auction2_participate_count(user):
 
 
 # - tedad auction mode 2 ijad karde
-def get_auction2_create_count(user):
-    return Auction.objects.filter(user=user, mode=2).count()
+def get_auction2_create_count(user, all_auctions):
+    return all_auctions.filter(user=user, mode=2).count()
 
 
 # - payam haye akhir
@@ -188,9 +188,9 @@ def get_last_chats(user):
 
 # - list az:
 #   - hazine, daramad -> entekhabe sal
-def get_yearly_income_list(user, year):
+def get_yearly_income_list(user, year, all_auctions):
     income_list = []
-    auctions = Auction.objects.filter(
+    auctions = all_auctions.filter(
         user=user, finished_at__year=year, best_bid__isnull=False
     )
     for auction in auctions:
@@ -198,9 +198,9 @@ def get_yearly_income_list(user, year):
     return income_list
 
 
-def get_yearly_expense_list(user, year, all_user_bids):
+def get_yearly_expense_list(user, year, all_user_bids, all_auctions):
     expense_list = []
     for user_bid in all_user_bids:
-        if Auction.objects.filter(best_bid=user_bid, finished_at__year=year).exists():
+        if all_auctions.filter(best_bid=user_bid, finished_at__year=year).exists():
             expense_list.append(user_bid.price)
     return expense_list
