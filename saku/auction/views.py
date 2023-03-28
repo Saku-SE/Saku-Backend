@@ -128,13 +128,19 @@ class DetailedAuction(generics.RetrieveUpdateAPIView):
         instance = self.get_object()
         old_image = instance.auction_image
         new_image = self.request.data.get("auction_image")
+
+        serializer_save_data = request.data.copy()
         if new_image and old_image:
             try:
                 os.remove(old_image.path)
             except:
                 pass
+        elif not new_image:
+            serializer_save_data.pop('auction_image')
+            print(serializer_save_data)
 
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+    
+        serializer = self.get_serializer(instance, data=serializer_save_data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
