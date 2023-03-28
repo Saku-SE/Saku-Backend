@@ -179,7 +179,7 @@ def get_auction2_participate_count(user, all_bids):
 
 # - tedad auction mode 2 ijad karde
 def get_auction2_create_count(user, all_auctions):
-    return get_auction_create_count(user, all_auctions, 1)
+    return get_auction_create_count(user, all_auctions, 2)
 
 
 # - payam haye akhir
