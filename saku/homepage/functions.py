@@ -104,11 +104,9 @@ def get_your_colaberation_list(all_user_bids, all_user_auctions):
             .order_by("time__date")
         )
     )
-    ### does union works?
-    ### how to convert to list better ?
-    colaberation_list = []
-    for colaberation in colaberation_count:
-        colaberation_list.append(colaberation["count"])
+    ### TODO:
+    ### does union work?
+    colaberation_list = [colaberation["count"] for colaberation in colaberation_count]
     return colaberation_list
 
 
@@ -124,10 +122,7 @@ def get_others_colaberation_list(user, all_bids):
         .annotate(count=Count("id"))
         .order_by("time__date")
     )
-    ### how to convert to list better ?
-    colaberation_list = []
-    for colaberation in colaberation_count:
-        colaberation_list.append(colaberation["count"])
+    colaberation_list = [colaberation["count"] for colaberation in colaberation_count]
     return colaberation_list
 
 
