@@ -40,7 +40,7 @@ class HomepageView(generics.GenericAPIView):
                 ),
                 "others_colaberation_list": get_others_colaberation_list(user, all_bids),
                 "others_colaberation_count": get_others_colaberation_count(user, all_bids),
-                "expense_list": get_expense_list(user, all_user_bids, all_auctions),
+                "expense_list": get_expense_list(all_user_bids, all_auctions),
                 "expense": get_expense(user, all_user_bids, all_auctions),
                 "auction1_participate_count": get_auction1_participate_count(user, all_bids),
                 "auction1_create_count": get_auction1_create_count(user, all_auctions),
@@ -49,7 +49,7 @@ class HomepageView(generics.GenericAPIView):
                 # 'last_chats' : get_last_chats(user),
                 "yearly_income_list": get_yearly_income_list(user, year, all_auctions),
                 "yearly_expense_list": get_yearly_expense_list(
-                    user, year, all_user_bids, all_auctions
+                    year, all_user_bids, all_auctions
                 ),
             },
         }

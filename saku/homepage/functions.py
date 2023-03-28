@@ -34,9 +34,11 @@ def get_auctions_count(all_user_auctions):
 #   - vaziat (barande, bazande)
 def get_last_auctions_participated(user, all_user_bids):
     all_user_bids = all_user_bids.order_by("-time")
-    success_choices = ["successfull", "failed", "unknown"]
     last_auctions = []
     auctions = set()
+    SUCCESSFULL_STATE = "successfull"
+    FAILED_STATE = "failed"
+    UNKNOWN_STATE = "unknown"
     for user_bid in all_user_bids:
         if len(auctions) == 5:
             break
@@ -44,20 +46,17 @@ def get_last_auctions_participated(user, all_user_bids):
             auction: Auction = user_bid.auction
             auctions.add(auction.pk)
             best_bid: Bid = auction.best_bid
-            if best_bid == None:
-                success = success_choices[2]
+            if best_bid is None:
+                success = UNKNOWN_STATE
             else:
-                best_bid_user = best_bid.user
-                if best_bid_user == user:
-                    success = success_choices[0]
-                else:
-                    success = success_choices[1]
+                success = SUCCESSFULL_STATE if best_bid.user == user else FAILED_STATE
+            auction_info = auction.__dict__
             auction_info = {
-                "mode": auction.mode,
-                "name": auction.name,
-                "created_at": auction.created_at,
-                "finished_at": auction.finished_at,
-                "success": success,
+                'mode': auction_info['mode'],
+                'name': auction_info['name'],
+                'created_at': auction_info['created_at'],
+                'finished_at': auction_info['finished_at'],
+                'success': success,
             }
             last_auctions.append(auction_info)
     return last_auctions
@@ -129,7 +128,7 @@ def get_others_colaberation_count(user, all_bids):
 
 
 # - list hazine ha
-def get_expense_list(user, all_user_bids, all_auctions):
+def get_expense_list(all_user_bids, all_auctions):
     expense_list = []
     for user_bid in all_user_bids:
         if all_auctions.filter(best_bid=user_bid).exists():
@@ -191,7 +190,7 @@ def get_yearly_income_list(user, year, all_auctions):
     return income_list
 
 
-def get_yearly_expense_list(user, year, all_user_bids, all_auctions):
+def get_yearly_expense_list(year, all_user_bids, all_auctions):
     expense_list = []
     for user_bid in all_user_bids:
         if all_auctions.filter(best_bid=user_bid, finished_at__year=year).exists():
