@@ -143,6 +143,7 @@ def get_expense(all_user_bids, all_auctions):
     return expense
 
 
+# - tedad auction sherkat karde
 def get_auction_participate_count(user, all_bids, auction_mode):
     auction_participate = set()
     all_user_bids = all_bids.filter(user=user, auction__mode=auction_mode)
@@ -150,27 +151,9 @@ def get_auction_participate_count(user, all_bids, auction_mode):
         auction_participate.add(user_bid.auction)
     return len(auction_participate)
 
+# - tedad auction ijad karde
 def get_auction_create_count(user, all_auctions, auction_mode):
     return all_auctions.filter(user=user, mode=auction_mode).count()
-
-# - tedad auction mode 1 sherkat karde
-def get_auction1_participate_count(user, all_bids):
-    return get_auction_participate_count(user, all_bids, 1)
-
-
-# - tedad auction mode 1 ijad karde
-def get_auction1_create_count(user, all_auctions):
-    return get_auction_create_count(user, all_auctions, 1)
-
-
-# - tedad auction mode 2 sherkat karde
-def get_auction2_participate_count(user, all_bids):
-    return get_auction_participate_count(user, all_bids, 2)
-
-
-# - tedad auction mode 2 ijad karde
-def get_auction2_create_count(user, all_auctions):
-    return get_auction_create_count(user, all_auctions, 2)
 
 
 # - payam haye akhir
