@@ -1,10 +1,9 @@
-from rest_framework.generics import ListAPIView
 from chat.models import Chat, Message
-from user_profile.models import Profile
-# Create your views here.
-from rest_framework.permissions import IsAuthenticated
 from chat.serializers import GetChatSerializer, GetMessageSerializer
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from user_profile.models import Profile
 
 
 def _get_chat_by_username(starter_username, contact_username):

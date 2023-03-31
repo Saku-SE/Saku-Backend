@@ -1,6 +1,8 @@
 from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
-from .views import Register, CompeleteRegisteration, ChangePassword, ForgotPassword
+
+from .views import (ChangePassword, CompeleteRegisteration, ForgotPassword,
+                    Register)
 
 app_name = "account"
 urlpatterns = [

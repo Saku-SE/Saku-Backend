@@ -1,6 +1,7 @@
-from django.db.models import Sum, Count, F
 from auction.models import Auction
 from bid.models import Bid
+from django.db.models import Count, F, Sum
+
 
 # - daramad
 def get_income(user):
@@ -103,8 +104,8 @@ def get_your_colaberation_list(all_user_bids, all_user_auctions):
             .order_by("time__date")
         )
     )
-    ### does union works?
-    ### how to convert to list better ?
+    ### does union work?
+    ### how to convert to list better?
     colaberation_list = []
     for colaberation in colaberation_count:
         colaberation_list.append(colaberation["count"])

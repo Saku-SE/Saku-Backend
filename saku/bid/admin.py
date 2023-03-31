@@ -1,6 +1,4 @@
-from django.contrib import admin
 from bid.models import Bid
-
-# Register your models here.
+from django.contrib import admin
 
 admin.site.register(Bid)

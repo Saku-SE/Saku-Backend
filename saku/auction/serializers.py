@@ -1,9 +1,10 @@
 import random
 import string
+
+from auction.models import Auction, Category, Tags
+from bid.models import Bid
 from rest_framework import serializers
 from user_profile.serializers import GeneralProfileSerializer
-from bid.models import Bid
-from auction.models import Auction, Tags, Category
 
 
 def get_random_token():
@@ -75,15 +76,12 @@ class GetAuctionRequestSerializer(serializers.ModelSerializer):
         return context
 
     def get_best_bid(self, obj):
-        # best_bid = obj.best_bid
-        # if best_bid == None:
         bids = Bid.objects.filter(auction=obj.id).order_by("price")
         if len(bids) > 0:
             if obj.mode == 1:
                 best_bid = bids.last()
             else:
                 best_bid = bids.first()
-        # if best_bid != None:
             user_data = GeneralProfileSerializer(
                 best_bid.user, context={"request": self.context.get("request")}
             ).data

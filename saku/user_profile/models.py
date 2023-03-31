@@ -1,8 +1,11 @@
-import os, random, string
+import os
+import random
+import string
 
 from django.contrib.auth.models import User
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    RegexValidator)
 from django.db import models
-from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 
 phone_validator = RegexValidator(
     regex=r"^09\d{9}$", message="Phone number is invalid (.eg '09123456789')"
@@ -28,7 +31,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     person_type = models.CharField(choices=TYPE_CHOICES, max_length=1, default="N")
     name = models.CharField(max_length=40, blank=True)
-    # national_id = models.IntegerField(validators=[MinValueValidator(1000000000), MaxValueValidator(9999999999)])
     national_id = models.CharField(
         validators=[national_id_validator], max_length=10, blank=True
     )

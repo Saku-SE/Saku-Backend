@@ -1,8 +1,9 @@
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from auction.models import Auction
 from bid.models import Bid
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from .functions import *
 
 
@@ -43,7 +44,6 @@ class HomepageView(generics.GenericAPIView):
                 "auction1_create_count": get_auction1_create_count(user),
                 "auction2_participate_count": get_auction2_participate_count(user),
                 "auction2_create_count": get_auction2_create_count(user),
-                # 'last_chats' : get_last_chats(user),
                 "yearly_income_list": get_yearly_income_list(user, year),
                 "yearly_expense_list": get_yearly_expense_list(
                     user, year, all_user_bids

@@ -1,5 +1,5 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework import serializers
 from user_profile.models import Profile
 
 
@@ -51,10 +51,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
 
 class ForgotPasswordSerializer(serializers.ModelSerializer):
-    # username = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
 
     class Meta:
         model = User
-        # fields = ['username']
         fields = ["email"]

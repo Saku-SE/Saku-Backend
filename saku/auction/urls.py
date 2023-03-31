@@ -1,10 +1,6 @@
+from auction.views import (CategoryList, CreateListAuction,
+                           DeleteAuctionPicture, DetailedAuction)
 from django.urls import path
-from auction.views import (
-    CreateListAuction,
-    CategoryList,
-    DetailedAuction,
-    DeleteAuctionPicture,
-)
 
 urlpatterns = [
     path("", CreateListAuction.as_view(), name="auction"),
