@@ -1,5 +1,5 @@
 import json
-from django.test import TestCase
+from django.test import APITestCase
 from rest_framework.test import APIClient
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from .models import Profile
 
 
-class ProfileTest(TestCase):
+class ProfileTest(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(
