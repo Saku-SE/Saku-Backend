@@ -32,16 +32,17 @@ class Tags(models.Model):
 
 
 class Auction(models.Model):
-    class Mode(models.IntegerChoices):
-        INCREASING = 1
-        DECREASING = 2
-
+    # class Mode(models.IntegerChoices):
+    #     INCREASING = 1
+    #     DECREASING = 2
+    mode_choices = [(1, 'Increasing'), (2, 'Decreasing')]
+    
     name = models.CharField(max_length=20)
     token = models.CharField(max_length=8, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_created=True)
     finished_at = models.DateTimeField()
-    mode = models.IntegerField(choices=Mode.choices, default=Mode.INCREASING)
+    mode = models.IntegerField(choices=mode_choices, default=mode_choices[0])
     limit = models.IntegerField(default=0)
     location = models.CharField(max_length=50, blank=True)
     description = models.CharField(max_length=200, blank=True)
