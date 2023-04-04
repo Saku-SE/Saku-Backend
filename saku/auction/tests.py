@@ -222,7 +222,7 @@ class EditAuctionTest(APITestCase):
         )
 
     def test_delete_image_success(self):
-        response = self.client.post(path="/auction/picture/qwertyui")
+        response = self.client.post(path="/auction/remove-picture/qwertyui")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get(path="/auction/qwertyui")
         self.assertEqual(response.data["auction_image"], None)

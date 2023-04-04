@@ -110,8 +110,8 @@ class DetailedAuction(generics.RetrieveUpdateAPIView):
             except:
                 pass
         elif not new_image:
-            serializer_save_data.pop('auction_image')
-            print(serializer_save_data)
+            if 'auction_image' in serializer_save_data.keys():
+                serializer_save_data.pop('auction_image')
 
     
         serializer = self.get_serializer(instance, data=serializer_save_data, partial=True)
