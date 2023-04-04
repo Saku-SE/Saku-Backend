@@ -89,6 +89,7 @@ class GetAuctionRequestSerializer(serializers.ModelSerializer):
         # if best_bid == None:
         # TODO: check if not None is same as finish time not arrived yet
         if obj.best_bid is not None:
+            best_bid = obj.best_bid
             user_data = GeneralProfileSerializer(
                 best_bid.user, context={"request": self.context.get("request")}
             ).data
