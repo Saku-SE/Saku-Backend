@@ -21,7 +21,7 @@ class HomepageView(generics.GenericAPIView):
             "status": "success",
             "code": status.HTTP_200_OK,
             "data": {
-                "income": get_income(user),
+                "income": get_income(user, all_auctions),
                 "seccussfull_auction_count": get_seccussfull_auction_count(user, all_auctions),
                 "auctions_participants_num": get_auctions_participants_num(
                     all_user_auctions
@@ -41,7 +41,7 @@ class HomepageView(generics.GenericAPIView):
                 "others_colaberation_list": get_others_colaberation_list(user, all_bids),
                 "others_colaberation_count": get_others_colaberation_count(user, all_bids),
                 "expense_list": get_expense_list(all_user_bids, all_auctions),
-                "expense": get_expense(user, all_user_bids, all_auctions),
+                "expense": get_expense(all_user_bids, all_auctions),
                 "auction1_participate_count": get_auction_participate_count(user, all_bids, 1),
                 "auction1_create_count": get_auction_create_count(user, all_auctions, 1),
                 "auction2_participate_count": get_auction_participate_count(user, all_bids, 2),
