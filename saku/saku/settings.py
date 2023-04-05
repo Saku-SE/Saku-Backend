@@ -25,10 +25,6 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 
-# Initialize environment variables
-env = environ.Env()
-environ.Env.read_env()
-
 # Application definition
 
 INSTALLED_APPS = [
