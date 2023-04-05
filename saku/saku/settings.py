@@ -27,7 +27,7 @@ ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Initialize Environment variables
-env_config = dotenv_values("../.env")
+env_config = dotenv_values("../dev.env")
 
 # Application definition
 
