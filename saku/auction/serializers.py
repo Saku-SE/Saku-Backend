@@ -9,8 +9,8 @@ from rest_framework import serializers
 from user_profile.serializers import GeneralProfileSerializer
 
 
-def get_random_token(id):
-    hash = createHash(id)
+def get_random_token():
+    hash = createHash(datetime.now().timestamp())
     rand = "".join(
         random.choice(string.ascii_letters + string.digits) for _ in range(2)
     )
@@ -36,13 +36,9 @@ class CreateAuctionRequestSerializer(serializers.ModelSerializer):
         return super().validate(data)
 
     def create(self, validated_data):
-        # token = get_random_token()
-        # while Auction.objects.filter(token=token).exists():
-        #     token = get_random_token()
+        token = get_random_token()
+        validated_data["token"] = token
         created_data = super().create(validated_data)
-        # token = get_random_token(created_data.id)
-        # created_data.token = token
-        created_data["token"] = "asdff"
         return created_data
 
 
