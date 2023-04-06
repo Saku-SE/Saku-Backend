@@ -1,15 +1,26 @@
+import hashlib
 import random
 import string
+from datetime import datetime
+
+from auction.models import Auction, Category, Tags
+from bid.models import Bid
 from rest_framework import serializers
 from user_profile.serializers import GeneralProfileSerializer
-from bid.models import Bid
-from auction.models import Auction, Tags, Category
 
 
 def get_random_token():
-    return "".join(
-        random.choice(string.ascii_letters + string.digits) for _ in range(8)
+    hash = createHash(datetime.now().timestamp())
+    rand = "".join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(2)
     )
+    
+    return rand + hash
+    
+def createHash(id):
+    # generates 6 characters
+    hash = hashlib.shake_256(str(id).encode()).hexdigest(3)
+    return hash
 
 
 class CreateAuctionRequestSerializer(serializers.ModelSerializer):
@@ -26,10 +37,9 @@ class CreateAuctionRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         token = get_random_token()
-        while Auction.objects.filter(token=token).exists():
-            token = get_random_token()
         validated_data["token"] = token
-        return super().create(validated_data)
+        created_data = super().create(validated_data)
+        return created_data
 
 
 class TagSerializer(serializers.ModelSerializer):
