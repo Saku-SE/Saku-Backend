@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:12-alpine3.15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=saku-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=saku1234
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7.0.2-alpine
+    command: redis-server
+    ports:
+      - "26379:6379"
+
+  web:
+    # image: "ghcr.io/mehdi-mostafavi/saku:${TAG}"
+    build: .
+    # tty: true
+    command: /bin/sh -c "cd saku && sleep 10 && coverage run ./manage.py test && coverage report"
+    volumes:
+      - .:/code
+    ports:
+      - "8888:8888"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  postgres_data:
