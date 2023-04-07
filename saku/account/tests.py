@@ -1,14 +1,13 @@
 import json
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework.exceptions import ErrorDetail
 from django.contrib.auth.models import User
 from user_profile.models import Profile
 
 
-class AccountTest(TestCase):
+class AccountTest(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(username="test_user", password="Ab654321")
