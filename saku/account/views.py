@@ -1,14 +1,12 @@
 import random
 
+from account.serializers import (ChangePasswordSerializer,
+                                 ForgotPasswordSerializer, RegisterSerializer)
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from saku.user_profile.models import Profile
-
-
-from saku.account.serializers import (ChangePasswordSerializer, ForgotPasswordSerializer,
-                          RegisterSerializer)
+from user_profile.models import Profile
 
 
 class Register(generics.GenericAPIView):
