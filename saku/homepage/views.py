@@ -11,15 +11,18 @@ class HomepageView(generics.GenericAPIView):
 
     def get(self, request, year):
         user = request.user
-        all_user_auctions = Auction.objects.filter(user=user)
-        all_user_bids = Bid.objects.filter(user=user)
+        all_auctions = Auction.objects.all()
+        all_user_auctions = all_auctions.filter(user=user)
+
+        all_bids = Bid.objects.all()
+        all_user_bids = all_bids.filter(user=user)
 
         response = {
             "status": "success",
             "code": status.HTTP_200_OK,
             "data": {
-                "income": get_income(user),
-                "seccussfull_auction_count": get_seccussfull_auction_count(user),
+                "income": get_income(user, all_auctions),
+                "seccussfull_auction_count": get_seccussfull_auction_count(user, all_auctions),
                 "auctions_participants_num": get_auctions_participants_num(
                     all_user_auctions
                 ),
@@ -28,25 +31,25 @@ class HomepageView(generics.GenericAPIView):
                     user, all_user_bids
                 ),
                 "last_auctions_created": get_last_auctions_created(all_user_auctions),
-                "income_list": get_income_list(user),
+                "income_list": get_income_list(user, all_auctions),
                 "your_colaberation_list": get_your_colaberation_list(
                     all_user_bids, all_user_auctions
                 ),
                 "your_colaberation_count": get_your_colaberation_count(
                     all_user_bids, all_user_auctions
                 ),
-                "others_colaberation_list": get_others_colaberation_list(user),
-                "others_colaberation_count": get_others_colaberation_count(user),
-                "expense_list": get_expense_list(user, all_user_bids),
-                "expense": get_expense(user, all_user_bids),
-                "auction1_participate_count": get_auction1_participate_count(user),
-                "auction1_create_count": get_auction1_create_count(user),
-                "auction2_participate_count": get_auction2_participate_count(user),
-                "auction2_create_count": get_auction2_create_count(user),
+                "others_colaberation_list": get_others_colaberation_list(user, all_bids),
+                "others_colaberation_count": get_others_colaberation_count(user, all_bids),
+                "expense_list": get_expense_list(all_user_bids, all_auctions),
+                "expense": get_expense(all_user_bids, all_auctions),
+                "auction1_participate_count": get_auction_participate_count(user, all_bids, 1),
+                "auction1_create_count": get_auction_create_count(user, all_auctions, 1),
+                "auction2_participate_count": get_auction_participate_count(user, all_bids, 2),
+                "auction2_create_count": get_auction_create_count(user, all_auctions, 2),
                 # 'last_chats' : get_last_chats(user),
-                "yearly_income_list": get_yearly_income_list(user, year),
+                "yearly_income_list": get_yearly_income_list(user, year, all_auctions),
                 "yearly_expense_list": get_yearly_expense_list(
-                    user, year, all_user_bids
+                    year, all_user_bids, all_auctions
                 ),
             },
         }
