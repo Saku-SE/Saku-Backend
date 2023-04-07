@@ -1,28 +1,15 @@
 from django_filters import rest_framework as filters
-# from django.db.models import Transform
 from distutils.util import strtobool
 from datetime import datetime
 from auction.models import Auction
-
-# TODO:
-# should change when mode handling changes in Auction model
-# int_choices = [(1, 'Increasing'), (2, 'Decreasing')]
-# int_choices = [('1', 1, '2', 2)]
-
-# class StringIntFilter()
 
 class AuctionListFilter(filters.FilterSet):
     username = filters.CharFilter(field_name="user__username", lookup_expr="exact")
     name = filters.CharFilter(field_name="name", lookup_expr="contains")
     mode = filters.NumberFilter(method='mode__exact')
-    # mode = filters.TypedChoiceFilter(choices=int_choices, coerce=int)
     category = filters.CharFilter(field_name="category__name", lookup_expr="exact")
-    # tag = filters.CharFilter(field_name="tags", lookup_expr="in")
     tag = filters.CharFilter(method="tags__in")
-    # finished = fil
-    # limit = filters.NumberFilter(field_name="limit", lookup_expr="gte")
     limit = filters.NumberFilter(method="limit__gte")
-    # int(limit)
     finished = filters.Filter(method="finished__tf")
 
     def mode__exact(self, queryset, value, *args, **kwargs):
@@ -62,6 +49,4 @@ class AuctionListFilter(filters.FilterSet):
     
     class Meta:
         model = Auction
-        # pass
-        # fields = '__all__'
         fields = ['username', 'name', 'mode', 'category', 'tag', 'limit', 'finished']
