@@ -102,13 +102,19 @@ class DetailedAuction(generics.RetrieveUpdateAPIView):
         instance = self.get_object()
         old_image = instance.auction_image
         new_image = self.request.data.get("auction_image")
+
+        serializer_save_data = request.data.copy()
         if new_image and old_image:
             try:
                 os.remove(old_image.path)
             except:
                 pass
+        elif not new_image:
+            if 'auction_image' in serializer_save_data.keys():
+                serializer_save_data.pop('auction_image')
 
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+    
+        serializer = self.get_serializer(instance, data=serializer_save_data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -129,13 +135,9 @@ class DeleteAuctionPicture(generics.GenericAPIView):
 
     def post(self, request, token):
         instance = self.get_object()
-        if instance.auction_image:
-            try:
-                os.remove(instance.auction_image.path)
-            except:
-                pass
-            instance.auction_image = None
-            instance.save()
+        instance.auction_image.delete(save=False)
+        # instance.auction_image = None
+        instance.save()
         return Response(
             {"message": "Auction picture deleted"}, status=status.HTTP_200_OK
         )
