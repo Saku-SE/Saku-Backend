@@ -48,38 +48,6 @@ class CreateListAuction(generics.ListCreateAPIView):
 
     def get_queryset(self):
         auctions = Auction.objects.order_by("-created_at")
-        # if self.request.method == 'GET':
-        #     username = self.request.GET.get('username')
-        #     if username:
-        #         auctions = auctions.filter(user__username=username)
-
-        #     name = self.request.GET.get('name')
-        #     if name:
-        #         auctions = auctions.filter(name__contains=name)
-
-        #     mode = self.request.GET.get('mode')
-        #     if mode:
-        #         auctions = auctions.filter(mode=int(mode))
-
-        #     category = self.request.GET.get('category')
-        #     if category:
-        #         auctions = auctions.filter(category__name=category)
-
-        #     tag = self.request.GET.get('tag')
-        #     if tag:
-        #         auctions = auctions.filter(tags__in=tag)
-
-        #     finished = self.request.GET.get('finished')
-        #     if finished and finished == "true":
-        #         auctions = auctions.filter(finished_at__lt=datetime.now())
-
-        #     elif finished and finished == "false":
-        #         auctions = auctions.filter(finished_at__gte=datetime.now())
-
-        #     limit = self.request.GET.get('limit')
-        #     if limit:
-        #         auctions = auctions.filter(limit__gte=int(limit))
-
         return auctions
 
     @swagger_auto_schema(
