@@ -1,16 +1,14 @@
 import datetime
-
 from auction.models import Auction, Category, Tags
 from bid.models import Bid
-from django.contrib.auth.models import User
-from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth.models import User
+from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
-from rest_framework.test import APIClient
 
 
-class HomePageTest(TestCase):
+class HomePageTest(APITestCase):
     def setUp(self):
         self.client = APIClient()
 

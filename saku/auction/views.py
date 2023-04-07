@@ -13,11 +13,16 @@ from rest_framework.response import Response
 
 from saku.serializers import (GeneralCreateResponseSerializer,
                               GeneralErrorResponseSerializer)
+from django_filters import rest_framework as filters
+from auction.filters import AuctionListFilter
 
 
 class CreateListAuction(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Auction.objects.order_by("finished_at")
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = AuctionListFilter
 
     @swagger_auto_schema(
         responses={
@@ -41,38 +46,6 @@ class CreateListAuction(generics.ListCreateAPIView):
 
     def get_queryset(self):
         auctions = Auction.objects.order_by("-created_at")
-        if self.request.method == 'GET':
-            username = self.request.GET.get('username')
-            if username:
-                auctions = auctions.filter(user__username=username)
-
-            name = self.request.GET.get('name')
-            if name:
-                auctions = auctions.filter(name__contains=name)
-
-            mode = self.request.GET.get('mode')
-            if mode:
-                auctions = auctions.filter(mode=int(mode))
-
-            category = self.request.GET.get('category')
-            if category:
-                auctions = auctions.filter(category__name=category)
-
-            tag = self.request.GET.get('tag')
-            if tag:
-                auctions = auctions.filter(tags__in=tag)
-
-            finished = self.request.GET.get('finished')
-            if finished and finished == "true":
-                auctions = auctions.filter(finished_at__lt=datetime.now())
-
-            elif finished and finished == "false":
-                auctions = auctions.filter(finished_at__gte=datetime.now())
-
-            limit = self.request.GET.get('limit')
-            if limit:
-                auctions = auctions.filter(limit__gte=int(limit))
-
         return auctions
 
     @swagger_auto_schema(
@@ -83,6 +56,7 @@ class CreateListAuction(generics.ListCreateAPIView):
     )
     def get(self, request, *args, **kwargs):
         auctions = self.get_queryset()
+        auctions = self.filter_queryset(auctions)
         serializer = GetAuctionRequestSerializer(
             auctions, many=True, context={"request": request}
         )
@@ -126,13 +100,19 @@ class DetailedAuction(generics.RetrieveUpdateAPIView):
         instance = self.get_object()
         old_image = instance.auction_image
         new_image = self.request.data.get("auction_image")
+
+        serializer_save_data = request.data.copy()
         if new_image and old_image:
             try:
                 os.remove(old_image.path)
             except:
                 pass
+        elif not new_image:
+            if 'auction_image' in serializer_save_data.keys():
+                serializer_save_data.pop('auction_image')
 
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+    
+        serializer = self.get_serializer(instance, data=serializer_save_data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -153,13 +133,9 @@ class DeleteAuctionPicture(generics.GenericAPIView):
 
     def post(self, request, token):
         instance = self.get_object()
-        if instance.auction_image:
-            try:
-                os.remove(instance.auction_image.path)
-            except:
-                pass
-            instance.auction_image = None
-            instance.save()
+        instance.auction_image.delete(save=False)
+        # instance.auction_image = None
+        instance.save()
         return Response(
             {"message": "Auction picture deleted"}, status=status.HTTP_200_OK
         )

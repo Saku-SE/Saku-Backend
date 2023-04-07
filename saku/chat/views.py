@@ -33,8 +33,8 @@ class GetChat(ListAPIView):
         serializer = self.get_serializer(data=self.get_queryset(), many=True)
         if serializer.is_valid():
             return Response(data=serializer.data, status=200)
-        # Todo: Fix this
-        raise
+        else:
+            return Response(data=serializer.data, status = 404)
 
 
 class GetMessage(ListAPIView):
@@ -50,11 +50,17 @@ class GetMessage(ListAPIView):
         )
 
     def get(self, request, *args, **kwargs):
-        self.chat = _get_chat_by_username(
-            self.request.user.username, kwargs["username"]
-        )
+        try:  
+            self.chat = _get_chat_by_username(
+                self.request.user.username, kwargs["username"]
+            )
+        except: 
+            responseMessage = {
+                "data" : "User does not exist."   
+            }
+            return Response(data=responseMessage, status=404)
         serializer = self.get_serializer(data=self.get_queryset(), many=True)
         if serializer.is_valid():
             return Response(data=serializer.data, status=200)
-        # Todo: Fix this
-        raise
+        else:
+            return Response(data=serializer.data, status=404)
