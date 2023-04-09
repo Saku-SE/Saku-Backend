@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: m.docker-registry.ir/postgres:12-alpine3.15
+    image: postgres:12-alpine3.15
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -13,13 +13,14 @@ services:
       - "5432:5432"
 
   redis:
-    image: m.docker-registry.ir/redis:7.0.2-alpine
+    image: redis:7.0.2-alpine
     command: redis-server
     ports:
       - "26379:6379"
 
   web:
-    image: "ghcr.io/mehdi-mostafavi/saku:latest"
+    image: "ghcr.io/a_roodgar/saku:latest"
+    # build: .
     command: /bin/sh -c "cd saku && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8888"
     ports:
       - "8888:8888"
