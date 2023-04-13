@@ -1,0 +1,35 @@
+name: temp-release
+
+on:
+  push:
+    branches: 
+      - '*'
+      - '!develop'
+      - '!main'
+  # pull_request:
+  #   branches: [develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # env:
+    #   GITHUB_TOKEN: ${{ secrets.PAT }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # - id: release
+    #   uses: rymndhng/release-on-push-action@master
+    #   with:
+    #       bump_version_scheme: minor
+
+    - name: build docker
+      run: |
+        docker build . -t ghcr.io/a_roodgar/saku-se:${{ github.sha }}
+
+    - name: push
+      run: |
+        docker login --username=${{ secrets.BACK_REG_USERNAME }} --password=${{ secrets.BACKEND_PAT }} ghcr.io
+        docker push ghcr.io/a_roodgar/saku-se:${{ github.sha }}
+
