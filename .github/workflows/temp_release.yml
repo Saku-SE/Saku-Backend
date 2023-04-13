@@ -2,10 +2,9 @@ name: temp-release
 
 on:
   push:
-    branches: 
-      - '*'
-      - '!develop'
-      - '!main'
+    branches-ignore:
+      - 'main'
+      - 'develop'
   # pull_request:
   #   branches: [develop]
 
