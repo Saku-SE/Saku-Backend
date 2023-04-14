@@ -86,5 +86,5 @@ jobs:
           push: true
           # tags: ${{ steps.meta.outputs.tags }}
           # tags: ${{ github.sha }}
-          tags: ${{ env.IMAGE_TAG }}
+          tags: saku-backend:${{ env.IMAGE_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
