@@ -29,7 +29,7 @@ jobs:
 
     - name: push
       run: |
-        docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
+        docker login -u ${{ secrets.BACK_REG_USERNAME }} -p ${{ secrets.BACKEND_PAT }} ghcr.io
         docker push ghcr.io/saku-se/saku-backend:${{ github.sha }}
       # run: |
       #   docker login --username=${{ secrets.BACK_REG_USERNAME }} --password=${{ secrets.BACKEND_PAT }} ghcr.io
