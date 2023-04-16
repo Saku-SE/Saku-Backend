@@ -1,11 +1,13 @@
 import datetime
-from django.urls import reverse
+
+from auction.models import Auction, Category, Tags
 from django.contrib.auth.models import User
-from rest_framework.test import APIClient, APITestCase
 from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
-from auction.models import Auction, Tags, Category
+from rest_framework.test import APIClient, APITestCase
+
 from .models import Bid
 
 

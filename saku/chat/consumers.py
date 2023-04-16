@@ -1,11 +1,13 @@
 import json
+
 import jwt
-from channels.consumer import AsyncConsumer
 from channels import exceptions
-from saku import settings
-from django.contrib.auth.models import User
+from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
 from chat.models import Chat, Message
+from django.contrib.auth.models import User
+
+from saku import settings
 
 
 class ChatConsumer(AsyncConsumer):

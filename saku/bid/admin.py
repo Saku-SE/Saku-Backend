@@ -1,5 +1,5 @@
-from django.contrib import admin
 from bid.models import Bid
+from django.contrib import admin
 
 # Register your models here.
 

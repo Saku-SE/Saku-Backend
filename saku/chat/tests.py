@@ -1,7 +1,7 @@
 from chat.models import Chat, Message
-from user_profile.models import Profile
-from rest_framework.test import APIClient, APITestCase
 from django.contrib.auth.models import User
+from rest_framework.test import APIClient, APITestCase
+from user_profile.models import Profile
 
 
 class GetChatTest(APITestCase):

@@ -1,5 +1,5 @@
-from django.urls import path
 from comment.views import ListCreateComments, ReplyCommentView
+from django.urls import path
 
 app_name = "comment"
 urlpatterns = [
