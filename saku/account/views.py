@@ -1,20 +1,19 @@
 import random
+
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.core.validators import validate_email
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from user_profile.models import Profile
 
 from saku.settings import EMAIL_HOST_USER
-from user_profile.models import Profile
-from .serializers import (
-    RegisterSerializer,
-    ChangePasswordSerializer,
-    ForgotPasswordSerializer,
-)
+
+from .serializers import (ChangePasswordSerializer, ForgotPasswordSerializer,
+                          RegisterSerializer)
 
 
 # send_email is slow!

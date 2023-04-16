@@ -1,7 +1,10 @@
 import datetime
+
+import auction.models
+import bid.models
 import pytz
+
 from saku.celery import app
-import bid.models, auction.models
 
 
 @app.task(bind=True)

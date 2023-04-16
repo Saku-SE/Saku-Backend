@@ -1,12 +1,12 @@
 import datetime
 import time
-from rest_framework.test import APIClient
-from rest_framework.exceptions import ErrorDetail
-from rest_framework.test import APITestCase
+
+from auction.models import Auction, Category, Tags
+from bid.models import Bid
 from django.contrib.auth.models import User
 from rest_framework import status
-from auction.models import Auction, Tags, Category
-from bid.models import Bid
+from rest_framework.exceptions import ErrorDetail
+from rest_framework.test import APIClient, APITestCase
 
 
 # Create your tests here.

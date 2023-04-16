@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
-  
+
 def get_default_user_id():
     filter = User.objects.filter(username="unkown_reserved_user")
     if filter.exists():

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
-from .models import Comment
 from user_profile.serializers import GeneralProfileSerializer
+
+from .models import Comment
 
 
 class GetCommentSerializer(serializers.ModelSerializer):

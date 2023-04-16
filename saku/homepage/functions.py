@@ -1,6 +1,7 @@
-from django.db.models import Sum, Count
 from auction.models import Auction
 from bid.models import Bid
+from django.db.models import Count, Sum
+
 
 # - daramad
 def get_income(user, all_auctions):

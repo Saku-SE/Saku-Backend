@@ -1,5 +1,5 @@
-from django.urls import path
 from chat.views import GetChat, GetMessage
+from django.urls import path
 
 urlpatterns = [
     path("my/", GetChat.as_view()),
