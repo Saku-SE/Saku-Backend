@@ -1,4 +1,4 @@
-from django.apps import AppConfiu
+from django.apps import AppConfig
 
 
 class AuctionConfig(AppConfig):
