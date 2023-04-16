@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 from datetime import timedelta
+from dotenv import dotenv_values
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,6 +25,9 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Initialize Environment variables
+env_config = dotenv_values("../dev.env")
 
 # Application definition
 
@@ -81,15 +85,14 @@ WSGI_APPLICATION = "saku.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "saku-db",
-        "USER": "postgres",
-        "PASSWORD": "saku1234",
-        "HOST": os.getenv("DB_HOST", "db"),
-        "PORT": "5432",
+        "NAME": env_config['DB_NAME'],
+        "USER": env_config['DB_USER'],
+        "PASSWORD": env_config['DB_PASSWORD'],
+        "HOST": env_config['DB_HOST'],
+        "PORT": env_config['DB_PORT'],
     },
     "local": {"ENGINE": "django.db.backends.sqlite3", "NAME": "./saku.db"},
 }
