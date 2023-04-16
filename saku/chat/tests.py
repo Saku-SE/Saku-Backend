@@ -1,7 +1,7 @@
 from chat.models import Chat, Message
-from user_profile.models import Profile
-from rest_framework.test import APIClient, APITestCase
 from django.contrib.auth.models import User
+from rest_framework.test import APIClient, APITestCase
+from user_profile.models import Profile
 
 
 class GetChatTest(APITestCase):
@@ -28,3 +28,10 @@ class GetChatTest(APITestCase):
         )
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.data))
+
+
+    def test_fail_get_message(self):
+        response = self.client.get(
+            path="/chat/messages/emad/"
+        )
+        self.assertEqual(404, response.status_code)

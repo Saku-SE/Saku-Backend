@@ -1,8 +1,11 @@
-import os, random, string
+import os
+import random
+import string
 
 from django.contrib.auth.models import User
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    RegexValidator)
 from django.db import models
-from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 
 phone_validator = RegexValidator(
     regex=r"^09\d{9}$", message="Phone number is invalid (.eg '09123456789')"
