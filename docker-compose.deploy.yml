@@ -19,7 +19,7 @@ services:
       - "26379:6379"
 
   web:
-    image: "ghcr.io/mehdi-mostafavi/saku:latest"
+    image: "ghcr.io/saku-se/saku-backend:latest"
     command: /bin/sh -c "cd saku && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8888"
     ports:
       - "8888:8888"
