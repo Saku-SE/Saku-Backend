@@ -1,15 +1,26 @@
+import hashlib
 import random
 import string
+from datetime import datetime
+
+from auction.models import Auction, Category, Tags
+from bid.models import Bid
 from rest_framework import serializers
 from user_profile.serializers import GeneralProfileSerializer
-from bid.models import Bid
-from auction.models import Auction, Tags, Category
 
 
 def get_random_token():
-    return "".join(
-        random.choice(string.ascii_letters + string.digits) for _ in range(8)
+    hash = createHash(datetime.now().timestamp())
+    rand = "".join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(2)
     )
+    
+    return rand + hash
+    
+def createHash(id):
+    # generates 6 characters
+    hash = hashlib.shake_256(str(id).encode()).hexdigest(3)
+    return hash
 
 
 class CreateAuctionRequestSerializer(serializers.ModelSerializer):
@@ -26,10 +37,9 @@ class CreateAuctionRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         token = get_random_token()
-        while Auction.objects.filter(token=token).exists():
-            token = get_random_token()
         validated_data["token"] = token
-        return super().create(validated_data)
+        created_data = super().create(validated_data)
+        return created_data
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -75,15 +85,23 @@ class GetAuctionRequestSerializer(serializers.ModelSerializer):
         return context
 
     def get_best_bid(self, obj):
-        # best_bid = obj.best_bid
-        # if best_bid == None:
+        # if not None is same as finish time not arrived yet
+        if obj.best_bid is not None:
+            best_bid = obj.best_bid
+            user_data = GeneralProfileSerializer(
+                best_bid.user, context={"request": self.context.get("request")}
+            ).data
+            return {
+                "user": user_data,
+                "time": best_bid.time,
+                "price": best_bid.price
+            }
         bids = Bid.objects.filter(auction=obj.id).order_by("price")
         if len(bids) > 0:
             if obj.mode == 1:
                 best_bid = bids.last()
             else:
                 best_bid = bids.first()
-        # if best_bid != None:
             user_data = GeneralProfileSerializer(
                 best_bid.user, context={"request": self.context.get("request")}
             ).data

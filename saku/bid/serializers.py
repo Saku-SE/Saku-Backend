@@ -1,9 +1,9 @@
-from django.db.models import Max, Min
-from rest_framework import serializers
-from user_profile.serializers import GeneralProfileSerializer
 from auction.models import Auction
 from bid.models import Bid
+from django.db.models import Max, Min
 from django.utils import timezone
+from rest_framework import serializers
+from user_profile.serializers import GeneralProfileSerializer
 
 
 class BidSerializer(serializers.ModelSerializer):

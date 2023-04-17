@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import UpdateProfile, DeleteProfilePicture
+
+from .views import DeleteProfilePicture, UpdateProfile
 
 app_name = "user_profile"
 urlpatterns = [

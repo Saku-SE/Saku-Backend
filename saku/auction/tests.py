@@ -1,12 +1,12 @@
 import datetime
 import time
-from rest_framework.test import APIClient
-from rest_framework.exceptions import ErrorDetail
-from rest_framework.test import APITestCase
+
+from auction.models import Auction, Category, Tags
+from bid.models import Bid
 from django.contrib.auth.models import User
 from rest_framework import status
-from auction.models import Auction, Tags, Category
-from bid.models import Bid
+from rest_framework.exceptions import ErrorDetail
+from rest_framework.test import APIClient, APITestCase
 
 
 # Create your tests here.
@@ -124,7 +124,7 @@ class GetAuctionTest(APITestCase):
             **{
                 "created_at": "2020-08-24T14:15:22Z",
                 "name": "auction2",
-                "finished_at": "2022-08-24T14:15:22Z",
+                "finished_at": "2024-08-24T14:15:22Z",
                 "mode": 1,
                 "limit": 0,
                 "is_private": False,
@@ -222,7 +222,7 @@ class EditAuctionTest(APITestCase):
         )
 
     def test_delete_image_success(self):
-        response = self.client.post(path="/auction/picture/qwertyui")
+        response = self.client.post(path="/auction/remove-picture/qwertyui")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get(path="/auction/qwertyui")
         self.assertEqual(response.data["auction_image"], None)

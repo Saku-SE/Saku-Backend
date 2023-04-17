@@ -1,10 +1,10 @@
-from rest_framework.generics import ListAPIView
 from chat.models import Chat, Message
-from user_profile.models import Profile
+from chat.serializers import GetChatSerializer, GetMessageSerializer
+from rest_framework.generics import ListAPIView
 # Create your views here.
 from rest_framework.permissions import IsAuthenticated
-from chat.serializers import GetChatSerializer, GetMessageSerializer
 from rest_framework.response import Response
+from user_profile.models import Profile
 
 
 def _get_chat_by_username(starter_username, contact_username):
@@ -34,8 +34,8 @@ class GetChat(ListAPIView):
         serializer = self.get_serializer(data=self.get_queryset(), many=True)
         if serializer.is_valid():
             return Response(data=serializer.data, status=200)
-        # Todo: Fix this
-        raise
+        else:
+            return Response(data=serializer.data, status = 404)
 
 
 class GetMessage(ListAPIView):
@@ -51,11 +51,17 @@ class GetMessage(ListAPIView):
         )
 
     def get(self, request, *args, **kwargs):
-        self.chat = _get_chat_by_username(
-            self.request.user.username, kwargs["username"]
-        )
+        try:  
+            self.chat = _get_chat_by_username(
+                self.request.user.username, kwargs["username"]
+            )
+        except: 
+            responseMessage = {
+                "data" : "User does not exist."   
+            }
+            return Response(data=responseMessage, status=404)
         serializer = self.get_serializer(data=self.get_queryset(), many=True)
         if serializer.is_valid():
             return Response(data=serializer.data, status=200)
-        # Todo: Fix this
-        raise
+        else:
+            return Response(data=serializer.data, status=404)

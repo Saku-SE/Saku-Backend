@@ -1,5 +1,5 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework import serializers
 from user_profile.models import Profile
 
 
@@ -17,6 +17,13 @@ class RegisterSerializer(serializers.ModelSerializer):
                 "There is another account with this email"
             )
         return email
+    
+    def validate_username(self, username):
+        if username == "unkown_reserved_user": 
+            raise serializers.ValidationError(
+                "You can't create a user with the default name."
+            )
+        return username
 
     def create(self, validated_data):
         # create user account

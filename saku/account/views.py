@@ -1,20 +1,19 @@
 import random
+
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.core.validators import validate_email
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from user_profile.models import Profile
 
 from saku.settings import EMAIL_HOST_USER
-from user_profile.models import Profile
-from .serializers import (
-    RegisterSerializer,
-    ChangePasswordSerializer,
-    ForgotPasswordSerializer,
-)
+
+from .serializers import (ChangePasswordSerializer, ForgotPasswordSerializer,
+                          RegisterSerializer)
 
 
 # send_email is slow!
@@ -28,13 +27,13 @@ class Register(generics.GenericAPIView):
         username = serializer.data.get("username")
         email = serializer.data.get("email")
         randomcode = random.randrange(1000, 9999)
-        send_mail(
-            "Verify Email",
-            f"Hi {username}!\nYour verification code is: {randomcode}",
-            EMAIL_HOST_USER,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+        # send_mail(
+        #     "Verify Email",
+        #     f"Hi {username}!\nYour verification code is: {randomcode}",
+        #     EMAIL_HOST_USER,
+        #     recipient_list=[email],
+        #     fail_silently=False,
+        # )
         return Response({"code": randomcode}, status=status.HTTP_200_OK)
 
 
@@ -96,13 +95,13 @@ class ForgotPassword(generics.GenericAPIView):
             new_password = User.objects.make_random_password()
             user.set_password(new_password)
             user.save()
-            send_mail(
-                "New Password",
-                f"Hi {user.username}!\nYour new password is: {new_password}",
-                EMAIL_HOST_USER,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
+            # send_mail(
+            #     "New Password",
+            #     f"Hi {user.username}!\nYour new password is: {new_password}",
+            #     EMAIL_HOST_USER,
+            #     recipient_list=[user.email],
+            #     fail_silently=False,
+            # )
             response = {
                 "status": "success",
                 "code": status.HTTP_200_OK,

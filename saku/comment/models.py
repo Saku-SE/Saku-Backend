@@ -1,6 +1,6 @@
-from django.db import models
-from django.contrib.auth.models import User
 from auction.models import Auction
+from django.contrib.auth.models import User
+from django.db import models
 
 
 class Comment(models.Model):
