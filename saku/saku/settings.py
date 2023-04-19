@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 from datetime import timedelta
-from dotenv import dotenv_values
+# from dotenv import dotenv_values
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +27,17 @@ ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Initialize Environment variables
-env_config = dotenv_values("../dev.env")
+# TODO: fix bug -> cannot create superuser (env_config KeyError)
+# env_config = dotenv_values("../../dev.env")
+# env_config = dict(list(env_config.items()))
+
+env_config = {
+    "DB_NAME": "saku-db",
+    "DB_USER": "postgres",
+    "DB_PASSWORD": "saku1234",
+    "DB_HOST": "db",
+    "DB_PORT": "5432"
+}
 
 # Application definition
 
