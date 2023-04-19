@@ -13,7 +13,7 @@ class GeneralAdviceView(generics.GenericAPIView):
 
     def post(self, request):
         try:
-            answer_values = [support_q_maps[str(request.data[key])] for key in support_q_maps.keys()]
+            answer_values = [support_q_maps[key][str(request.data[key])] for key in support_q_maps.keys()]
             final_value = sum(answer_values)
 
             # result = 0
@@ -34,8 +34,7 @@ class GeneralAdviceView(generics.GenericAPIView):
                 }
             }
 
-        except:
-            
+        except KeyError as e:
             response = {
                 "status": "error",
                 "code": status.HTTP_400_BAD_REQUEST,
