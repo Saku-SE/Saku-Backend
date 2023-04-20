@@ -13,7 +13,11 @@ class GeneralAdviceView(generics.GenericAPIView):
 
     def post(self, request):
         try:
-            answer_values = [support_q_maps[key][str(request.data[key])] for key in support_q_maps.keys()]
+            q_maps_keys = support_q_maps.keys()
+            for key in request.data.keys():
+                if key not in q_maps_keys:
+                    raise KeyError
+            answer_values = [support_q_maps[key][str(request.data[key])] for key in q_maps_keys]
             final_value = sum(answer_values)
 
             # result = 0
