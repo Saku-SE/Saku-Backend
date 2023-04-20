@@ -26,8 +26,13 @@ jobs:
       # run: |
       #   docker build . -t ghcr.io/saku-se/saku-backend:${{ github.sha }}
       run: |
-        docker build . -t ghcr.io/saku-se/saku-backend:latest
+        docker build . -t ghcr.io/saku-se/saku-backend:${{ github.sha }}
     - name: Push backend docker image to ghcr.io
       run: |
         docker login -u ${{ secrets.BACK_REG_USERNAME }} -p ${{ secrets.BACKEND_PAT }} ghcr.io
+        docker push ghcr.io/saku-se/saku-backend:${{ github.sha }}
+    - name: Tag image as latest
+      run: |
+        docker pull ghcr.io/saku-se/saku-backend:${{ github.sha }}
+        docker tag ghcr.io/saku-se/saku-backend:${{ github.sha }} ghcr.io/saku-se/saku-backend:latest
         docker push ghcr.io/saku-se/saku-backend:latest
