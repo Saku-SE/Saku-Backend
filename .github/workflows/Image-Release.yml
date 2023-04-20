@@ -2,7 +2,7 @@ name: image-release
 
 on:
   workflow_run:
-    workflows: [dev-test]
+    workflows: [CI]
     branches: [main]
     types:
       - completed
