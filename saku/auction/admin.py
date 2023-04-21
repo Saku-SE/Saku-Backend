@@ -1,8 +1,9 @@
 from django.contrib import admin
-from auction.models import Auction, Tags, Category
+from auction.models import Auction, Tags, Category, Score
 
 # Register your models here.
 
 admin.site.register(Auction)
 admin.site.register(Tags)
 admin.site.register(Category)
+admin.site.register(Score)
