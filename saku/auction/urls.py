@@ -4,6 +4,7 @@ from auction.views import (
     CategoryList,
     DetailedAuction,
     DeleteAuctionPicture,
+    AuctionScoreDetail
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
         DeleteAuctionPicture.as_view(),
         name="delete_auction_picture",
     ),
+    path("score/<str:token>", AuctionScoreDetail.as_view(), name="detailed_score_auction"),
 ]
