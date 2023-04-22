@@ -19,11 +19,12 @@ services:
       - "26379:6379"
 
   web:
-    # image: "ghcr.io/saku-se/saku-backend:f4a688ce7c05f55d73664111dad1793f8a6d7f3d"
+    #image: "ghcr.io/saku-se/saku-backend:f4a688ce7c05f55d73664111dad1793f8a6d7f3d"
+    #image: "ghcr.io/saku-se/saku-backend:${TAG}"
     image: "ghcr.io/saku-se/saku-backend:latest"
     #build: .
     tty: true
-    command: /bin/sh -c "cd saku && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8888"
+    command: /bin/sh -c "pwd && ls && cd saku && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8888"
     ports:
       - "8888:8888"
     depends_on:
@@ -32,17 +33,21 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
-      #- static:/code/saku/static
-      #- media:/code/saku/media
-      - .:/code
+      - static:/code/saku/static
+      - media:/code/saku/media
+      #- .:/code
 
   celery:
     restart: always
-    build:
-      context: .
-    command: /bin/sh -c "cd saku && celery -A saku worker -l info"
-    volumes:
-      - .:/code
+    #build:
+      #context: .
+      #dockerfile: ./celery.Dockerfile
+    image: "ghcr.io/saku-se/saku-backend:latest"
+    #image: "ghcr.io/saku-se/saku-backend:f4a688ce7c05f55d73664111dad1793f8a6d7f3d"
+    tty: true
+    command: /bin/sh -c "pwd && echo 7878787 && ls && cd saku && celery -A saku worker -l info"
+    #volumes:
+      #- .:/code
     environment:
       - DB_HOST=db
       - DB_NAME=saku-db
@@ -55,6 +60,5 @@ services:
 
 volumes:
   postgres_data:
-  #static:
-  #media:
-  code:
+  static:
+  media:
