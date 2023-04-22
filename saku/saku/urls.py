@@ -30,6 +30,7 @@ urlpatterns = [
     path("comment/", include("comment.urls")),
     path("homepage/", include("homepage.urls")),
     path("chat/", include("chat.urls")),
+    path("support/", include("support.urls")),
 ]
 
 # url for user profile images:
