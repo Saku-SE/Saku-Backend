@@ -3,6 +3,7 @@ import random
 import string
 
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from saku.celery import app
@@ -18,7 +19,7 @@ def photo_path(instance, filename):
     return "images/auction_images/{randomstring}{ext}".format(
         randomstring=randomstr, ext=file_extension
     )
-
+    
 
 class Category(models.Model):
 
@@ -81,3 +82,19 @@ class Auction(models.Model):
             app.control.revoke(self.celery_task_id, terminate=True)
             task_object = save_best_bid.apply_async((self.pk,), eta=post_finished_at)
             Auction.objects.filter(pk=self.pk).update(celery_task_id=task_object.id)
+            
+            
+
+class Score(models.Model):
+    q1 = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)], blank=False, null=False)
+    q2 = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)], blank=False, null=False)
+    q3 = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)], blank=False, null=False)
+    q4 = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)], blank=False, null=False)
+    q5 = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)], blank=False, null=False)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['auction','user'], name='score_pk')
+        ]

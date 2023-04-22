@@ -3,7 +3,7 @@ import random
 import string
 from datetime import datetime
 
-from auction.models import Auction, Category, Tags
+from auction.models import Auction, Category, Tags, Score
 from bid.models import Bid
 from rest_framework import serializers
 from user_profile.serializers import GeneralProfileSerializer
@@ -142,3 +142,15 @@ class UpdateAuctionRequestSerializer(serializers.ModelSerializer):
                 "created_at can't be greater or equal to finished_at"
             )
         return super().validate(data)
+    
+
+
+
+class CreateScoreSreializer(serializers.ModelSerializer):
+    class Meta:
+        model = Score
+        fields = '__all__'
+
+    # def create(self, validated_data):
+    #     created_data = super().create(validated_data)
+    #     return created_data
