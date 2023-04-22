@@ -1,12 +1,13 @@
 import datetime
 import time
-from rest_framework.test import APIClient
-from rest_framework.exceptions import ErrorDetail
-from rest_framework.test import APITestCase
-from django.contrib.auth.models import User
-from rest_framework import status
-from auction.models import Auction, Tags, Category
+
+from auction.models import Auction, Category, Tags, Score
 from bid.models import Bid
+from django.contrib.auth.models import User
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.exceptions import ErrorDetail
+from rest_framework.test import APIClient, APITestCase
 
 
 # Create your tests here.
@@ -226,3 +227,78 @@ class EditAuctionTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get(path="/auction/qwertyui")
         self.assertEqual(response.data["auction_image"], None)
+        
+
+class ScoreTest(APITestCase): 
+    def setUp(self) -> None:
+        self.category = Category.objects.create(name="Category")
+        self.tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
+        # create a user
+        self.user = User.objects.create(id=1, username="Emad")
+        # create an auction
+        self.auction = Auction.objects.create(
+            **{"id": 5,
+                "created_at": "2019-08-24T14:15:22Z",
+               "name": "auction1",
+               "finished_at": datetime.datetime.now() + datetime.timedelta(0, 10),
+               "mode": 1,
+               "limit": 0,
+               "is_private": False,
+               "user": self.user,
+               "token": "qwertyui",
+               "category": self.category,
+               }
+        )
+        # authenticate the user
+        self.client.force_authenticate(user=self.user)
+        
+        
+        # create a user
+        self.scored_user = User.objects.create(id=2, username="Emad2")
+        self.score = Score.objects.create(user= self.scored_user, auction= self.auction, 
+                                          q1= 1, q2= 2, q3= 3, q4= 4, q5= 5)
+    
+    
+    def test_create_score(self):
+        # make a post request to create a score for the auction
+        dataTest = {
+            'q1': 2, 
+            'q2': 3, 
+            'q3': 2,
+            'q4': 1,
+            'q5': 2
+        }
+        response = self.client.post(path=f"/auction/score/{self.auction.token}", data= dataTest)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        
+    def test_create_score_invalid_data(self):
+        # make a post request to create a score for the auction with invalid data
+        dataTest = {
+            'q1': 6, 
+            'q2': 3, 
+            'q3': 2,
+            'q4': -1,
+            'q5': 2
+        }
+        response = self.client.post(path=f"/auction/score/{self.auction.token}", data= dataTest)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
+    
+    def test_get_auction_score_detail(self):
+        response = self.client.get(path=f"/auction/score/{self.auction.token}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_response_data = {
+            "status": "success",
+            "code": status.HTTP_200_OK,
+            "data": {
+                "mean_score": 15.0/5.0,
+                "number_of_scores": 1,
+            }
+        }
+        self.assertEqual(response.data, expected_response_data)
+        
+        
+    def test_get_auction_score_detail_false_auctionToken(self):
+        response = self.client.get(path=f"/auction/score/faToken")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
