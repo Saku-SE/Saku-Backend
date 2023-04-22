@@ -1,4 +1,5 @@
-from rest_framework.serializers import Serializer, CharField, DateTimeField
+from rest_framework.serializers import CharField, DateTimeField, Serializer
+
 
 class GetChatSerializer(Serializer):
     username = CharField(required=True)

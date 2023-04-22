@@ -1,5 +1,5 @@
+from bid.views import ListCreateAuctionBid, UserAuctionBidsView, UserBidsView
 from django.urls import path
-from bid.views import ListCreateAuctionBid, UserBidsView, UserAuctionBidsView
 
 app_name = "bid"
 urlpatterns = [

@@ -1,4 +1,7 @@
+from auction.views import (CategoryList, CreateListAuction,
+                           DeleteAuctionPicture, DetailedAuction)
 from django.urls import path
+
 from auction.views import (
     CreateListAuction,
     CategoryList,

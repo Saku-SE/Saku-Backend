@@ -1,10 +1,10 @@
-from django.contrib import admin
-from django.urls import path, include
-from django.conf.urls.static import static
 from django.conf import settings
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -30,6 +30,7 @@ urlpatterns = [
     path("comment/", include("comment.urls")),
     path("homepage/", include("homepage.urls")),
     path("chat/", include("chat.urls")),
+    path("support/", include("support.urls")),
 ]
 
 # url for user profile images:
