@@ -156,6 +156,10 @@ class AuctionScoreDetail(generics.ListCreateAPIView):
     def get(self, request, token):
         allScores = Score.objects.all()
         auctionScores = allScores.filter(auction__token = token)
+        
+        if(len(auctionScores) == 0):
+            return Response({"message" : "Auction with given token not found."}, status=status.HTTP_404_NOT_FOUND) 
+        
         meanList = []
         for auctionScore in auctionScores:
             sum_score = auctionScore.q1 + auctionScore.q2 + auctionScore.q3 + auctionScore.q4 + auctionScore.q5
@@ -181,9 +185,10 @@ class AuctionScoreDetail(generics.ListCreateAPIView):
     
     def post(self, request, token):
         auction = get_object_or_404(Auction, token=token)
-        request.data["user"] = request.user.id
-        request.data["auction"] = auction.id
-        serializer = CreateScoreSreializer(data=request.data)
+        requested_data = request.data.copy()
+        requested_data["user"] = request.user.id
+        requested_data["auction"] = auction.id
+        serializer = CreateScoreSreializer(data=requested_data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
