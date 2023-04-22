@@ -10,11 +10,32 @@ from auction.serializers import (CreateAuctionRequestSerializer,
 from django_filters import rest_framework as filters
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status
+
+from auction.serializers import (
+    CreateAuctionRequestSerializer,
+    GetAuctionRequestSerializer,
+    UpdateAuctionRequestSerializer,
+    GetCategoriesSerializer,
+    CreateScoreSreializer
+)
+from rest_framework.response import Response
+from saku.serializers import (
+    GeneralCreateResponseSerializer,
+    GeneralErrorResponseSerializer,
+)
+from rest_framework.permissions import IsAuthenticated
+from auction.models import Auction, Category, Tags, Score
+from datetime import datetime
+from django_filters import rest_framework as filters
+from auction.filters import AuctionListFilter
+from django.shortcuts import get_object_or_404
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from saku.serializers import (GeneralCreateResponseSerializer,
                               GeneralErrorResponseSerializer)
+
 
 
 class CreateListAuction(generics.ListCreateAPIView):
@@ -145,3 +166,47 @@ class CategoryList(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = GetCategoriesSerializer
     queryset = Category.objects.all()
+    
+class AuctionScoreDetail(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request, token):
+        allScores = Score.objects.all()
+        auctionScores = allScores.filter(auction__token = token)
+        
+        if(len(auctionScores) == 0):
+            return Response({"message" : "Auction with given token not found."}, status=status.HTTP_404_NOT_FOUND) 
+        
+        meanList = []
+        for auctionScore in auctionScores:
+            sum_score = auctionScore.q1 + auctionScore.q2 + auctionScore.q3 + auctionScore.q4 + auctionScore.q5
+            mean = sum_score / 5.0
+            meanList.append(mean)
+            
+        score_count  = len(meanList)
+        if score_count != 0:
+            result = sum(meanList)/score_count
+        else:
+            result = 0
+        
+        response = {
+            "status": "success",
+            "code": status.HTTP_200_OK,
+            "data": {
+                "mean_score": result,
+                "number_of_scores": score_count,
+            }
+        }
+        return Response(response, status=status.HTTP_200_OK)
+    
+    
+    def post(self, request, token):
+        auction = get_object_or_404(Auction, token=token)
+        requested_data = request.data.copy()
+        requested_data["user"] = request.user.id
+        requested_data["auction"] = auction.id
+        serializer = CreateScoreSreializer(data=requested_data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                
