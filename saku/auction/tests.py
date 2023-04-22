@@ -1,6 +1,7 @@
 import datetime
 import time
 
+
 from auction.models import Auction, Category, Tags, Score
 from bid.models import Bid
 from django.contrib.auth.models import User

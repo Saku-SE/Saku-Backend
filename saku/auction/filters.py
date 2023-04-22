@@ -1,7 +1,9 @@
-from django_filters import rest_framework as filters
-from distutils.util import strtobool
 from datetime import datetime
+from distutils.util import strtobool
+
 from auction.models import Auction
+from django_filters import rest_framework as filters
+
 
 class AuctionListFilter(filters.FilterSet):
     username = filters.CharFilter(field_name="user__username", lookup_expr="exact")

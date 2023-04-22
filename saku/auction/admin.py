@@ -1,3 +1,4 @@
+from auction.models import Auction, Category, Tags
 from django.contrib import admin
 from auction.models import Auction, Tags, Category, Score
 

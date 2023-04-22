@@ -1,0 +1,33 @@
+name: image-release
+
+on:
+  workflow_run:
+    workflows: [dev-test]
+    branches: [main]
+    types:
+      - completed
+    
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    # env:
+    #   GITHUB_TOKEN: ${{ secrets.PAT }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # - id: release
+    #   uses: rymndhng/release-on-push-action@master
+    #   with:
+    #       bump_version_scheme: minor
+
+    - name: Build backend docker image
+      # run: |
+      #   docker build . -t ghcr.io/saku-se/saku-backend:${{ github.sha }}
+      run: |
+        docker build . -t ghcr.io/saku-se/saku-backend:latest
+    - name: Push backend docker image to ghcr.io
+      run: |
+        docker login -u ${{ secrets.BACK_REG_USERNAME }} -p ${{ secrets.BACKEND_PAT }} ghcr.io
+        docker push ghcr.io/saku-se/saku-backend:latest
