@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import DeleteProfilePicture, UpdateProfile
+from .views import DeleteProfilePicture, UpdateProfile, FollowUserProfile
 
 app_name = "user_profile"
 urlpatterns = [
@@ -8,4 +8,5 @@ urlpatterns = [
     path(
         "delete/picture/", DeleteProfilePicture.as_view(), name="delete_profile_image"
     ),
+    path("follow/", FollowUserProfile.as_view(), name="follow_user"),
 ]
