@@ -75,15 +75,22 @@ class FollowUserProfile(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        followed = get_object_or_404(Profile, username=request.data["username"])
-        follower = request.user
+        followed = get_object_or_404(Profile, user__username=request.data["username"])
+        follower = Profile.objects.filter(user__id=request.user.id)[0]
         follow_data = {
-            "follower": follower,
-            "followed": followed
+            "follower": follower.id,
+            "followed": followed.id
         }
         serializer = CreateFollowRelationSerializer(data=follow_data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        response = {
+            "data": {
+                "follower_username": follower.user.username,
+                "followed_username": followed.user.username
+            }
+        }
+        # print(serializer.data)
+        return Response(response, status=status.HTTP_201_CREATED)
 
 

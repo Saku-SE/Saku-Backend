@@ -49,20 +49,11 @@ class GeneralProfileSerializer(serializers.ModelSerializer):
         return None
 
 class CreateFollowRelationSerializer(serializers.ModelSerializer):
-    follower_username = serializers.SerializerMethodField()
-    followed_username = serializers.SerializerMethodField()
-
     class Meta:
         model = FollowRelationship
-        fields = ["follower_username", "followed_username"]
+        fields = "__all__"
+        # exclude = ("id",)
 
-    def get_follower_username(self, obj):
-        profile = Profile.objects.filter(user=obj["follower"])
-        return profile.username
-
-    def get_followed_username(self, obj):
-        profile = Profile.objects.filter(user=obj["followed"])
-        return profile.username
-    
-    # def create():
-
+    # def create(validated_data):
+    #     instance = FollowRelationship.objects.create(**validated_data)
+    #     return instance
