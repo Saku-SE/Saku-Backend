@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Profile
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer, GeneralProfileSerializer
 
 
 class UpdateProfile(generics.RetrieveUpdateAPIView):
@@ -52,3 +52,20 @@ class DeleteProfilePicture(generics.GenericAPIView):
         return Response(
             {"message": "Profile picture deleted"}, status=status.HTTP_200_OK
         )
+
+class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, username):
+        profile = Profile.objects.filter(user__username=username)
+        if len(profile) == 0:
+            response = {
+                "status": "error",
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Invalide username.",
+                "data": []
+            }
+            return Response(response, status=response["code"])
+        profile = profile[0]
+        serializer = GeneralProfileSerializer(data=profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
