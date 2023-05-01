@@ -144,5 +144,32 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["data"]["username"], self.user.username)
         self.assertEqual(response.data["data"]["following_count"], 0)
-        self.assertEqual(response.data["data"]["follower_count"], 0)        
+        self.assertEqual(response.data["data"]["follower_count"], 0)   
+
+    def test_duplicate_follow(self):
+        url = reverse("user_profile:follow_user")
+        response = self.client.post(url, data={"username": self.user2.username})
+
+        url = reverse("user_profile:follow_user")
+        response = self.client.post(url, data={"username": self.user2.username})
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_invalid_follow_username(self):
+        url = reverse("user_profile:follow_user")
+        response = self.client.post(url, data={"username": "invalid"})
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    
+    def test_unfollow_not_followed_username(self):
+        url = reverse("user_profile:unfollow_user")
+        response = self.client.delete(f"{url}/{self.user2.username}")
+        
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_unfollow_invalid_username(self):
+        url = reverse("user_profile:unfollow_user")
+        response = self.client.delete(f"{url}/invalid")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
