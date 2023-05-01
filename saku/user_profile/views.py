@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Profile
-from .serializers import ProfileSerializer, GeneralProfileSerializer
+from .serializers import ProfileSerializer, GeneralProfileSerializer, CreateFollowRelationSerializer
+from django.shortcuts import get_object_or_404
 
 
 class UpdateProfile(generics.RetrieveUpdateAPIView):
@@ -69,3 +70,20 @@ class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
         profile = profile[0]
         serializer = GeneralProfileSerializer(data=profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FollowUserProfile(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        followed = get_object_or_404(Profile, username=request.data["username"])
+        follower = request.user
+        follow_data = {
+            "follower": follower,
+            "followed": followed
+        }
+        serializer = CreateFollowRelationSerializer(data=follow_data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
