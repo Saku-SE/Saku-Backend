@@ -26,6 +26,8 @@ class ProfileTest(APITestCase):
         self.user2.is_active = True
         self.user2.save()
         self.profile2 = Profile.objects.create(user=self.user2, email=self.user2.email)
+        self.client2 = APIClient()
+        self.client2.force_authenticate(self.user2)
 
 
     def test_update_profile_success(self):
@@ -115,4 +117,32 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.data["data"]["username"], self.user2.username)
         self.assertEqual(response.data["data"]["following_count"], 0)
         self.assertEqual(response.data["data"]["follower_count"], 0)
+
+    def test_follow_unfollow_followed_count(self):
+        url = reverse("user_profile:follow_user")
+        response = self.clien2.post(url, data={"username": self.user.username})
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = reverse("user_profile:detail-general-profile")
+        response = self.client.get(f"{url}/{self.user.username}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["username"], self.user.username)
+        self.assertEqual(response.data["data"]["following_count"], 0)
+        self.assertEqual(response.data["data"]["follower_count"], 1)
+
+
+        url = reverse("user_profile:unfollow_user")
+        response = self.clien2.delete(f"{url}/{self.user.username}")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        url = reverse("user_profile:detail-general-profile")
+        response = self.client.get(f"{url}/{self.user.username}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["username"], self.user.username)
+        self.assertEqual(response.data["data"]["following_count"], 0)
+        self.assertEqual(response.data["data"]["follower_count"], 0)        
 
