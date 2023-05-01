@@ -46,8 +46,8 @@ class Profile(models.Model):
         return self.name
     
 class FollowRelationship(models.Model):
-    follower = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    followed = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    follower = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="following")
+    followed = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="followers")
 
     class Meta:
         constraints = [
