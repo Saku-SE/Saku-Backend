@@ -4,7 +4,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Profile
+from .models import Profile, FollowRelationship
+from django.contrib.auth.models import User
 from .serializers import ProfileSerializer, GeneralProfileSerializer, CreateFollowRelationSerializer
 from django.shortcuts import get_object_or_404
 
@@ -54,22 +55,38 @@ class DeleteProfilePicture(generics.GenericAPIView):
             {"message": "Profile picture deleted"}, status=status.HTTP_200_OK
         )
 
-class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated]
+# class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request, username):
-        profile = Profile.objects.filter(user__username=username)
-        if len(profile) == 0:
-            response = {
-                "status": "error",
-                "code": status.HTTP_404_NOT_FOUND,
-                "message": "Invalide username.",
-                "data": []
-            }
-            return Response(response, status=response["code"])
-        profile = profile[0]
-        serializer = GeneralProfileSerializer(data=profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     def get(self, request, username):
+#         print("In GET")
+#         print(request)
+#         profile = Profile.objects.filter(user__username=username)
+#         print(username)
+#         print(profile)
+#         print(profile[0].name)
+#         if len(profile) == 0:
+#             response = {
+#                 "status": "error",
+#                 "code": status.HTTP_404_NOT_FOUND,
+#                 "message": "Invalide username.",
+#                 "data": []
+#             }
+#             return Response(response, status=response["code"])
+#         profile = profile[0]
+#         serializer = GeneralProfileSerializer(data=profile.user, context={"request": request})
+#         print(serializer)
+#         print("$$$$$$$$$$$$$$$")
+#         print(serializer.data)
+#         print("*****************")
+#         if serializer.is_valid():
+#             print("In if")
+#             print(serializer)
+#             print("***************")
+#             print(serializer.data)
+#             print("$$$$$$$$$$$$$$$")
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         return Response({"data": {"error": "Not found."}}, status=status.HTTP_404_NOT_FOUND)
 
 class FollowUserProfile(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -94,3 +111,14 @@ class FollowUserProfile(generics.ListCreateAPIView):
         return Response(response, status=status.HTTP_201_CREATED)
 
 
+class UnfollowUserProfile(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, username):
+        followed = get_object_or_404(Profile, user__username=username)
+        follower = Profile.objects.filter(user__id=request.user.id)[0]
+
+        follow_relation = get_object_or_404(FollowRelationship, follower=follower, followed=followed)
+        follow_relation.delete()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
