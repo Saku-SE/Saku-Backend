@@ -55,38 +55,44 @@ class DeleteProfilePicture(generics.GenericAPIView):
             {"message": "Profile picture deleted"}, status=status.HTTP_200_OK
         )
 
-# class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
-#     permission_classes = [IsAuthenticated]
+class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
 
-#     def get(self, request, username):
-#         print("In GET")
-#         print(request)
-#         profile = Profile.objects.filter(user__username=username)
-#         print(username)
-#         print(profile)
-#         print(profile[0].name)
-#         if len(profile) == 0:
-#             response = {
-#                 "status": "error",
-#                 "code": status.HTTP_404_NOT_FOUND,
-#                 "message": "Invalide username.",
-#                 "data": []
-#             }
-#             return Response(response, status=response["code"])
-#         profile = profile[0]
-#         serializer = GeneralProfileSerializer(data=profile.user, context={"request": request})
-#         print(serializer)
-#         print("$$$$$$$$$$$$$$$")
-#         print(serializer.data)
-#         print("*****************")
-#         if serializer.is_valid():
-#             print("In if")
-#             print(serializer)
-#             print("***************")
-#             print(serializer.data)
-#             print("$$$$$$$$$$$$$$$")
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         return Response({"data": {"error": "Not found."}}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request, username):
+        profile = Profile.objects.filter(user__username=username)
+        if len(profile) == 0:
+            response = {
+                "status": "error",
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Invalide username.",
+                "data": []
+            }
+            return Response(response, status=response["code"])
+        profile = profile[0]
+        # TODO: using the following and the serializer does not work. why?
+        # serializer = GeneralProfileSerializer(data=profile.user, context={"request": request})
+        if profile.profile_image:
+            base_url = request.build_absolute_uri("/").strip("/")
+            profile_img_url = base_url + "/media/" + f"{profile.profile_image}"
+        else:
+            profile_img_url = None
+
+        # get number of followers and followings
+        follower_count = FollowRelationship.objects.filter(followed=profile).count()
+        following_count = FollowRelationship.objects.filter(follower=profile).count()
+        
+        response = {
+            "data": {
+                "username": profile.user.username,
+                "name": profile.name,
+                "profile_image_url": profile_img_url,
+                "following_count": following_count,
+                "follower_count": follower_count
+            }
+        }
+        
+        return Response(response, status=status.HTTP_200_OK)
+        
 
 class FollowUserProfile(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
