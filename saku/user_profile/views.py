@@ -59,7 +59,9 @@ class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, username):
+        # print(username)
         profile = Profile.objects.filter(user__username=username)
+        # print(len(profile))
         if len(profile) == 0:
             response = {
                 "status": "error",
@@ -99,11 +101,17 @@ class FollowUserProfile(generics.ListCreateAPIView):
 
     def post(self, request):
         followed = get_object_or_404(Profile, user__username=request.data["username"])
+        if request.data["username"] == request.user.username:
+            return Response({"detail": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
         follower = Profile.objects.filter(user__id=request.user.id)[0]
         follow_data = {
             "follower": follower.id,
             "followed": followed.id
         }
+
+        if len(FollowRelationship.objects.filter(follower=follower, followed=followed)) > 0:
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
         serializer = CreateFollowRelationSerializer(data=follow_data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

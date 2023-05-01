@@ -83,49 +83,49 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.data["profile_image"], None)
 
     def test_detail_general_profile_info(self):
-        url = reverse("user_profile:detail-general-profile")
-        response = self.client.get(f"{url}/{self.user2.username}")
+        url = f"/profile/general/{self.user2.username}"
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["data"]["username"], self.user2.username)
 
     def test_follow_unfollow_follower_count_info(self):
 
-        url = reverse("user_profile:follow_user")
+        url = "/profile/follow/"
         response = self.client.post(url, data={"username": self.user2.username})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        url = reverse("user_profile:detail-general-profile")
-        response = self.client.get(f"{url}/{self.user2.username}")
+        url = f"/profile/general/{self.user.username}"
+        response = self.client.get(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["data"]["username"], self.user2.username)
+        self.assertEqual(response.data["data"]["username"], self.user.username)
         self.assertEqual(response.data["data"]["following_count"], 1)
         self.assertEqual(response.data["data"]["follower_count"], 0)
 
 
-        url = reverse("user_profile:unfollow_user")
-        response = self.client.delete(f"{url}/{self.user2.username}")
+        url = f"/profile/unfollow/{self.user2.username}"
+        response = self.client.delete(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        url = reverse("user_profile:detail-general-profile")
-        response = self.client.get(f"{url}/{self.user2.username}")
+        url = f"/profile/general/{self.user.username}"
+        response = self.client.get(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["data"]["username"], self.user2.username)
+        self.assertEqual(response.data["data"]["username"], self.user.username)
         self.assertEqual(response.data["data"]["following_count"], 0)
         self.assertEqual(response.data["data"]["follower_count"], 0)
 
     def test_follow_unfollow_followed_count(self):
-        url = reverse("user_profile:follow_user")
-        response = self.clien2.post(url, data={"username": self.user.username})
+        url = "/profile/follow/"
+        response = self.client2.post(url, data={"username": self.user.username})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        url = reverse("user_profile:detail-general-profile")
-        response = self.client.get(f"{url}/{self.user.username}")
+        url = f"/profile/general/{self.user.username}"
+        response = self.client.get(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["data"]["username"], self.user.username)
@@ -133,13 +133,13 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.data["data"]["follower_count"], 1)
 
 
-        url = reverse("user_profile:unfollow_user")
-        response = self.clien2.delete(f"{url}/{self.user.username}")
+        url = f"/profile/unfollow/{self.user.username}"
+        response = self.client2.delete(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        url = reverse("user_profile:detail-general-profile")
-        response = self.client.get(f"{url}/{self.user.username}")
+        url = f"/profile/general/{self.user.username}"
+        response = self.client.get(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["data"]["username"], self.user.username)
@@ -147,29 +147,35 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.data["data"]["follower_count"], 0)   
 
     def test_duplicate_follow(self):
-        url = reverse("user_profile:follow_user")
+        url = "/profile/follow/"
         response = self.client.post(url, data={"username": self.user2.username})
 
-        url = reverse("user_profile:follow_user")
+        url = "/profile/follow/"
         response = self.client.post(url, data={"username": self.user2.username})
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_invalid_follow_username(self):
-        url = reverse("user_profile:follow_user")
+        url = "/profile/follow/"
         response = self.client.post(url, data={"username": "invalid"})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     
     def test_unfollow_not_followed_username(self):
-        url = reverse("user_profile:unfollow_user")
-        response = self.client.delete(f"{url}/{self.user2.username}")
+        url = f"/profile/unfollow/{self.user2.username}"
+        response = self.client.delete(f"{url}")
         
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_unfollow_invalid_username(self):
-        url = reverse("user_profile:unfollow_user")
-        response = self.client.delete(f"{url}/invalid")
+        url = f"/profile/unfollow/invalid"
+        response = self.client.delete(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_same_follow_username(self):
+        url = f"/profile/follow/"
+        response = self.client.post(url, data={"username": self.user.username})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
