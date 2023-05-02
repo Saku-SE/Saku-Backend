@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Profile
+from .models import Profile, FollowRelationship
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -47,3 +47,13 @@ class GeneralProfileSerializer(serializers.ModelSerializer):
                     profile_url = base_url + "/media/" + f"{image}"
                     return profile_url
         return None
+
+class CreateFollowRelationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowRelationship
+        fields = "__all__"
+        # exclude = ("id",)
+
+    # def create(validated_data):
+    #     instance = FollowRelationship.objects.create(**validated_data)
+    #     return instance
