@@ -44,3 +44,12 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.name
+    
+class FollowRelationship(models.Model):
+    follower = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="following")
+    followed = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="followers")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['follower','followed'], name='follow_relation_pk')
+        ]
