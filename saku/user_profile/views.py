@@ -88,6 +88,7 @@ class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
         
         response = {
             "data": {
+                "user_id": profile.user.id,
                 "username": profile.user.username,
                 "name": profile.name,
                 "profile_image_url": profile_img_url,
