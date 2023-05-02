@@ -87,6 +87,7 @@ class ProfileTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["user_id"], self.user2.id)
         self.assertEqual(response.data["data"]["username"], self.user2.username)
 
     def test_follow_unfollow_is_followed_field(self):
@@ -100,6 +101,7 @@ class ProfileTest(APITestCase):
         response = self.client.get(f"{url}")        
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["user_id"], self.user2.id)
         self.assertEqual(response.data["data"]["username"], self.user2.username)
         self.assertEqual(response.data["data"]["following_count"], 0)
         self.assertEqual(response.data["data"]["follower_count"], 1)
@@ -117,6 +119,7 @@ class ProfileTest(APITestCase):
         response = self.client.get(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["user_id"], self.user.id)
         self.assertEqual(response.data["data"]["username"], self.user.username)
         self.assertEqual(response.data["data"]["following_count"], 1)
         self.assertEqual(response.data["data"]["follower_count"], 0)
@@ -131,6 +134,7 @@ class ProfileTest(APITestCase):
         response = self.client.get(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["user_id"], self.user.id)
         self.assertEqual(response.data["data"]["username"], self.user.username)
         self.assertEqual(response.data["data"]["following_count"], 0)
         self.assertEqual(response.data["data"]["follower_count"], 0)
@@ -145,6 +149,7 @@ class ProfileTest(APITestCase):
         response = self.client.get(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["user_id"], self.user.id)
         self.assertEqual(response.data["data"]["username"], self.user.username)
         self.assertEqual(response.data["data"]["following_count"], 0)
         self.assertEqual(response.data["data"]["follower_count"], 1)
@@ -159,6 +164,7 @@ class ProfileTest(APITestCase):
         response = self.client.get(f"{url}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["user_id"], self.user.id)
         self.assertEqual(response.data["data"]["username"], self.user.username)
         self.assertEqual(response.data["data"]["following_count"], 0)
         self.assertEqual(response.data["data"]["follower_count"], 0)   
