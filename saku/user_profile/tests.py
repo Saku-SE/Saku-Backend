@@ -89,6 +89,23 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["data"]["username"], self.user2.username)
 
+    def test_follow_unfollow_is_followed_field(self):
+        
+        url = "/profile/follow/"
+        response = self.client.post(url, data={"username": self.user2.username})
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = f"/profile/general/{self.user2.username}"
+        response = self.client.get(f"{url}")        
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["username"], self.user2.username)
+        self.assertEqual(response.data["data"]["following_count"], 0)
+        self.assertEqual(response.data["data"]["follower_count"], 1)
+        self.assertEqual(response.data["data"]["is_followed"], True)
+
+
     def test_follow_unfollow_follower_count_info(self):
 
         url = "/profile/follow/"

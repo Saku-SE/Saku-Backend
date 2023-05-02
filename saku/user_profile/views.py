@@ -79,8 +79,12 @@ class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
             profile_img_url = None
 
         # get number of followers and followings
-        follower_count = FollowRelationship.objects.filter(followed=profile).count()
-        following_count = FollowRelationship.objects.filter(follower=profile).count()
+        followers = FollowRelationship.objects.filter(followed=profile)
+        follower_count = followers.count()
+        followings = FollowRelationship.objects.filter(follower=profile)
+        following_count = followings.count()
+
+        is_followed = True if len(followers.filter(follower__user__username=request.user.username)) > 0 else False
         
         response = {
             "data": {
@@ -88,7 +92,8 @@ class DetailedGeneralProfileInfo(generics.RetrieveAPIView):
                 "name": profile.name,
                 "profile_image_url": profile_img_url,
                 "following_count": following_count,
-                "follower_count": follower_count
+                "follower_count": follower_count,
+                "is_followed": is_followed
             }
         }
         
