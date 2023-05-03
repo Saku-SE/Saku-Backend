@@ -13,6 +13,8 @@ class AuctionListFilter(filters.FilterSet):
     tag = filters.CharFilter(method="tags__in")
     limit = filters.NumberFilter(method="limit__gte")
     finished = filters.Filter(method="finished__tf")
+    is_online = filters.BooleanFilter(field_name="is_online")
+    desc = filters.CharFilter(field_name="description", lookup_expr="contains")
 
     def mode__exact(self, queryset, value, *args, **kwargs):
         try:
