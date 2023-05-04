@@ -2,11 +2,12 @@ import os
 from datetime import datetime
 
 from auction.filters import AuctionListFilter
-from auction.models import Auction, Category, Tags
+from auction.models import Auction, Category, Tags, City
 from auction.serializers import (CreateAuctionRequestSerializer,
                                  GetAuctionRequestSerializer,
                                  GetCategoriesSerializer,
-                                 UpdateAuctionRequestSerializer)
+                                 UpdateAuctionRequestSerializer,
+                                 CitySerializer)
 from django_filters import rest_framework as filters
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status
@@ -27,6 +28,7 @@ from rest_framework.permissions import IsAuthenticated
 from auction.models import Auction, Category, Tags, Score
 from datetime import datetime
 from django_filters import rest_framework as filters
+from django.db.models import Q
 from auction.filters import AuctionListFilter
 from django.shortcuts import get_object_or_404
 
@@ -209,4 +211,22 @@ class AuctionScoreDetail(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+class CityList(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request):
+        cities = City.objects.all()
+        serializer = CitySerializer(cities, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class AuctionsByCityView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, city_id):
+        city_retrieved = get_object_or_404(City, Q(id=city_id))
+        return Auction.objects.filter(city=city_retrieved)
+    
                 
