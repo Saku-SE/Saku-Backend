@@ -3,7 +3,7 @@ import random
 import string
 from datetime import datetime
 
-from auction.models import Auction, Category, Tags, Score
+from auction.models import Auction, Category, Tags, Score, City
 from bid.models import Bid
 from rest_framework import serializers
 from user_profile.serializers import GeneralProfileSerializer
@@ -151,6 +151,15 @@ class CreateScoreSreializer(serializers.ModelSerializer):
         model = Score
         fields = '__all__'
 
-    # def create(self, validated_data):
-    #     created_data = super().create(validated_data)
-    #     return created_data
+
+class CitySerializer(serializers.ModelSerializer):
+    num_auctions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = City
+        fields = ('id', 'name', 'num_auctions')
+
+    def get_num_auctions(self, obj):
+        return Auction.objects.filter(city=obj).count()
+    
+    
