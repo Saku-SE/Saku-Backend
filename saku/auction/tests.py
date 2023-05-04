@@ -2,13 +2,14 @@ import datetime
 import time
 
 
-from auction.models import Auction, Category, Tags, Score
+from auction.models import Auction, Category, Tags, Score, City
 from bid.models import Bid
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.test import APIClient, APITestCase
+from auction.serializers import CitySerializer
 
 
 # Create your tests here.
@@ -303,3 +304,21 @@ class ScoreTest(APITestCase):
     def test_get_auction_score_detail_false_auctionToken(self):
         response = self.client.get(path=f"/auction/score/faToken")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        
+
+class CityListViewTestCase(APITestCase):
+    def setUp(self):
+        self.city1 = City.objects.create(name='New York')
+        self.city2 = City.objects.create(name='Los Angeles')
+        self.city3 = City.objects.create(name='Chicago')
+        self.city4 = City.objects.create(name='Houston')
+        # authenticate the user
+        self.client.force_authenticate(user=self.user)
+
+    def test_list_cities(self):
+        url = reverse('get_city_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        cities = City.objects.all()
+        serializer = CitySerializer(cities, many=True)
+        self.assertEqual(response.data, serializer.data)
