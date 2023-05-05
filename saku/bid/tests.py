@@ -1,6 +1,6 @@
 import datetime
 
-from auction.models import Auction, Category, Tags
+from auction.models import Auction, Category, Tags, City
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
@@ -29,6 +29,7 @@ class BidTest(APITestCase):
         # create auction
         category = Category.objects.create(name="Category")
         tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
+        self.city1 = City.objects.create(name='Unkown')
 
         self.auction = Auction.objects.create(
             created_at="2019-08-24T14:15:22Z",
@@ -40,6 +41,7 @@ class BidTest(APITestCase):
             is_private=False,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction.tags.set(tags)
         self.auction.save()
@@ -54,6 +56,7 @@ class BidTest(APITestCase):
             is_private=True,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction2.tags.set(tags)
         self.auction2.save()
@@ -68,6 +71,7 @@ class BidTest(APITestCase):
             is_private=False,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction2.tags.set(tags)
         self.auction2.save()
@@ -247,6 +251,7 @@ class BidUserDeleteTest(TestCase):
         # create auction
         category = Category.objects.create(name="Category")
         tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
+        self.city1 = City.objects.create(name='Unkown')
 
         self.auction = Auction.objects.create(
             created_at="2019-08-24T14:15:22Z",
@@ -258,6 +263,7 @@ class BidUserDeleteTest(TestCase):
             is_private=False,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction.tags.set(tags)
         self.auction.save()
