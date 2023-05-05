@@ -69,7 +69,7 @@ class Auction(models.Model):
         to="bid.Bid", related_name="best_bid", on_delete=models.DO_NOTHING, null=True
     )
     auction_image = models.ImageField(upload_to=photo_path, null=True, blank=True)
-    city = models.ForeignKey(City, on_delete=models.DO_NOTHING)
+    city = models.ForeignKey(City, on_delete=models.SET_DEFAULT, default=1)
 
     def __str__(self):
         return self.name
