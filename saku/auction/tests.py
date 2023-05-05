@@ -78,6 +78,7 @@ class CreateAuctionTest(APITestCase):
     def test_auction_best_bid(self):
         category = Category.objects.create(name="Category")
         tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
+        self.city1 = City.objects.create(name='Unkown')
         auction = Auction.objects.create(
             **{"id": 5,
                 "created_at": "2019-08-24T14:15:22Z",
@@ -109,6 +110,7 @@ class GetAuctionTest(APITestCase):
         self.user = User.objects.create(id=1, username="Mehdi")
         self.client.force_authenticate(self.user)
         category = Category.objects.create(name="Category")
+        self.city1 = City.objects.create(name='Unkown')
         tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
         Auction.objects.create(
             **{
@@ -177,6 +179,7 @@ class EditAuctionTest(APITestCase):
         self.client = APIClient()
         self.user = User.objects.create(id=1, username="Mehdi")
         self.client.force_authenticate(self.user)
+        self.city1 = City.objects.create(name='Unkown')
         category = Category.objects.create(name="Category")
         tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
         Auction.objects.create(
@@ -233,6 +236,7 @@ class EditAuctionTest(APITestCase):
 
 class ScoreTest(APITestCase): 
     def setUp(self) -> None:
+        self.city1 = City.objects.create(name='Unkown')
         self.category = Category.objects.create(name="Category")
         self.tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
         # create a user

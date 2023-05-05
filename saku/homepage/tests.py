@@ -1,6 +1,6 @@
 import datetime
 
-from auction.models import Auction, Category, Tags
+from auction.models import Auction, Category, Tags, City
 from bid.models import Bid
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -29,6 +29,7 @@ class HomePageTest(APITestCase):
 
         # create auctions
         category = Category.objects.create(name="Category")
+        self.city1 = City.objects.create(name='Unkown')
         tag1 = Tags.objects.create(name="T1")
         tag2 = Tags.objects.create(name="T2")
         tags = [tag1, tag2]
