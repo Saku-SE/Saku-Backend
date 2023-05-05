@@ -22,6 +22,6 @@ urlpatterns = [
     ),
     path("score/<str:token>", AuctionScoreDetail.as_view(), name="detailed_score_auction"),
     path("city/", CityList.as_view(), name="get_city_list"),
-    path('city/<str:city_id>/', AuctionsByCityView.as_view(), name='auctions_by_city'),
+    path('city/<int:city_id>', AuctionsByCityView.as_view(), name='auctions_by_city'),
     
 ]

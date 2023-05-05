@@ -308,10 +308,13 @@ class ScoreTest(APITestCase):
 
 class CityListViewTestCase(APITestCase):
     def setUp(self):
+        self.city1 = City.objects.create(name='Unkown')
         self.city1 = City.objects.create(name='New York')
         self.city2 = City.objects.create(name='Los Angeles')
         self.city3 = City.objects.create(name='Chicago')
         self.city4 = City.objects.create(name='Houston')
+        # create a user
+        self.user = User.objects.create(id=1, username="Emad")
         # authenticate the user
         self.client.force_authenticate(user=self.user)
 

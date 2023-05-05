@@ -227,6 +227,19 @@ class AuctionsByCityView(generics.ListAPIView):
 
     def get(self, request, city_id):
         city_retrieved = get_object_or_404(City, Q(id=city_id))
-        return Auction.objects.filter(city=city_retrieved)
-    
+        auctions = Auction.objects.filter(city=city_retrieved.id)
+        response_data = []
+        for obj in auctions:
+            response_data.append({
+                'id': obj.id,
+                'name': obj.name,
+            })
+        response = {
+            "status": "success",
+            "code": status.HTTP_200_OK,
+            "data": {
+                "auctions": response_data
+            }
+        }
+        return Response(response, status=status.HTTP_200_OK)
                 
