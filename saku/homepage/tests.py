@@ -1,6 +1,6 @@
 import datetime
 
-from auction.models import Auction, Category, Tags
+from auction.models import Auction, Category, Tags, City
 from bid.models import Bid
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -29,6 +29,7 @@ class HomePageTest(APITestCase):
 
         # create auctions
         category = Category.objects.create(name="Category")
+        self.city1 = City.objects.create(name='Unkown')
         tag1 = Tags.objects.create(name="T1")
         tag2 = Tags.objects.create(name="T2")
         tags = [tag1, tag2]
@@ -42,6 +43,7 @@ class HomePageTest(APITestCase):
             is_private=True,
             user=self.user1,
             category=category,
+            city = self.city1,
         )
         self.auction1_user1.tags.set(tags)
         self.auction1_user1.save()
@@ -56,6 +58,7 @@ class HomePageTest(APITestCase):
             is_private=True,
             user=self.user1,
             category=category,
+            city = self.city1,
         )
         self.auction2_user1.tags.set(tags)
         self.auction2_user1.save()
@@ -70,6 +73,7 @@ class HomePageTest(APITestCase):
             is_private=True,
             user=self.user2,
             category=category,
+            city = self.city1,
         )
         self.auction3_user2.tags.set(tags)
         self.auction3_user2.save()
@@ -84,6 +88,7 @@ class HomePageTest(APITestCase):
             is_private=True,
             user=self.user2,
             category=category,
+            city = self.city1,
         )
         self.auction4_user2.tags.set(tags)
         self.auction4_user2.save()

@@ -35,6 +35,12 @@ class Tags(models.Model):
 
     def __str__(self):
         return self.name
+    
+class City(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Auction(models.Model):
@@ -63,6 +69,7 @@ class Auction(models.Model):
         to="bid.Bid", related_name="best_bid", on_delete=models.DO_NOTHING, null=True
     )
     auction_image = models.ImageField(upload_to=photo_path, null=True, blank=True)
+    city = models.ForeignKey(City, on_delete=models.SET_DEFAULT, default=1)
 
     def __str__(self):
         return self.name

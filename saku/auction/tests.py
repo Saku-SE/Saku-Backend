@@ -2,13 +2,14 @@ import datetime
 import time
 
 
-from auction.models import Auction, Category, Tags, Score
+from auction.models import Auction, Category, Tags, Score, City
 from bid.models import Bid
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.test import APIClient, APITestCase
+from auction.serializers import CitySerializer
 
 
 # Create your tests here.
@@ -19,6 +20,7 @@ class CreateAuctionTest(APITestCase):
         self.user2 = User.objects.create(id=2, username="Mehdi2")
         self.client.force_authenticate(self.user)
         Category.objects.create(name="C1")
+        self.city1 = City.objects.create(name='Unkown')
         self.request_data = {
             "created_at": "2019-08-24T14:15:22Z",
             "name": "string",
@@ -62,6 +64,7 @@ class CreateAuctionTest(APITestCase):
     def test_create_valid_auction(self):
         auctions_count = Auction.objects.count()
         self.request_data["user"] = 1
+        self.request_data["city"] = self.city1.id
         self.request_data["finished_at"] = "2020-08-24T14:15:22Z"
         response = self.client.post(
             path="/auction/", data=self.request_data, format="json"
@@ -88,6 +91,7 @@ class CreateAuctionTest(APITestCase):
                "user": self.user,
                "token": "qwertyui",
                "category": category,
+               "city" : self.city1,
                }
         )
         auction.tags.set(tags)
@@ -108,6 +112,7 @@ class GetAuctionTest(APITestCase):
         self.user = User.objects.create(id=1, username="Mehdi")
         self.client.force_authenticate(self.user)
         category = Category.objects.create(name="Category")
+        self.city1 = City.objects.create(name='Unkown')
         tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
         Auction.objects.create(
             **{
@@ -120,6 +125,7 @@ class GetAuctionTest(APITestCase):
                 "user": self.user,
                 "token": "qwertyui",
                 "category": category,
+                "city" : self.city1,
             }
         ).tags.set(tags)
         Auction.objects.create(
@@ -133,6 +139,7 @@ class GetAuctionTest(APITestCase):
                 "user": self.user,
                 "token": "asdfghjk",
                 "category": category,
+                "city" : self.city1,
             }
         ).tags.set(tags)
 
@@ -176,6 +183,7 @@ class EditAuctionTest(APITestCase):
         self.client = APIClient()
         self.user = User.objects.create(id=1, username="Mehdi")
         self.client.force_authenticate(self.user)
+        self.city1 = City.objects.create(name='Unkown')
         category = Category.objects.create(name="Category")
         tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
         Auction.objects.create(
@@ -189,6 +197,7 @@ class EditAuctionTest(APITestCase):
                 "user": self.user,
                 "token": "qwertyui",
                 "category": category,
+                "city" : self.city1,
             }
         ).tags.set(tags)
 
@@ -232,6 +241,7 @@ class EditAuctionTest(APITestCase):
 
 class ScoreTest(APITestCase): 
     def setUp(self) -> None:
+        self.city1 = City.objects.create(name='Unkown')
         self.category = Category.objects.create(name="Category")
         self.tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
         # create a user
@@ -248,6 +258,7 @@ class ScoreTest(APITestCase):
                "user": self.user,
                "token": "qwertyui",
                "category": self.category,
+               "city" : self.city1,
                }
         )
         # authenticate the user
@@ -303,3 +314,24 @@ class ScoreTest(APITestCase):
     def test_get_auction_score_detail_false_auctionToken(self):
         response = self.client.get(path=f"/auction/score/faToken")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        
+
+class CityListViewTestCase(APITestCase):
+    def setUp(self):
+        self.city1 = City.objects.create(name='Unkown')
+        self.city1 = City.objects.create(name='New York')
+        self.city2 = City.objects.create(name='Los Angeles')
+        self.city3 = City.objects.create(name='Chicago')
+        self.city4 = City.objects.create(name='Houston')
+        # create a user
+        self.user = User.objects.create(id=1, username="Emad")
+        # authenticate the user
+        self.client.force_authenticate(user=self.user)
+
+    def test_list_cities(self):
+        url = reverse('get_city_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        cities = City.objects.all()
+        serializer = CitySerializer(cities, many=True)
+        self.assertEqual(response.data, serializer.data)
