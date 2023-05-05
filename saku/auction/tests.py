@@ -20,6 +20,7 @@ class CreateAuctionTest(APITestCase):
         self.user2 = User.objects.create(id=2, username="Mehdi2")
         self.client.force_authenticate(self.user)
         Category.objects.create(name="C1")
+        self.city1 = City.objects.create(name='Unkown')
         self.request_data = {
             "created_at": "2019-08-24T14:15:22Z",
             "name": "string",
@@ -63,6 +64,7 @@ class CreateAuctionTest(APITestCase):
     def test_create_valid_auction(self):
         auctions_count = Auction.objects.count()
         self.request_data["user"] = 1
+        self.request_data["city"] = self.city1.id
         self.request_data["finished_at"] = "2020-08-24T14:15:22Z"
         response = self.client.post(
             path="/auction/", data=self.request_data, format="json"
@@ -78,7 +80,6 @@ class CreateAuctionTest(APITestCase):
     def test_auction_best_bid(self):
         category = Category.objects.create(name="Category")
         tags = [Tags.objects.create(name="T1"), Tags.objects.create(name="T2")]
-        self.city1 = City.objects.create(name='Unkown')
         auction = Auction.objects.create(
             **{"id": 5,
                 "created_at": "2019-08-24T14:15:22Z",
@@ -90,6 +91,7 @@ class CreateAuctionTest(APITestCase):
                "user": self.user,
                "token": "qwertyui",
                "category": category,
+               "city" : self.city1,
                }
         )
         auction.tags.set(tags)
@@ -123,6 +125,7 @@ class GetAuctionTest(APITestCase):
                 "user": self.user,
                 "token": "qwertyui",
                 "category": category,
+                "city" : self.city1,
             }
         ).tags.set(tags)
         Auction.objects.create(
@@ -136,6 +139,7 @@ class GetAuctionTest(APITestCase):
                 "user": self.user,
                 "token": "asdfghjk",
                 "category": category,
+                "city" : self.city1,
             }
         ).tags.set(tags)
 
@@ -193,6 +197,7 @@ class EditAuctionTest(APITestCase):
                 "user": self.user,
                 "token": "qwertyui",
                 "category": category,
+                "city" : self.city1,
             }
         ).tags.set(tags)
 
@@ -253,6 +258,7 @@ class ScoreTest(APITestCase):
                "user": self.user,
                "token": "qwertyui",
                "category": self.category,
+               "city" : self.city1,
                }
         )
         # authenticate the user

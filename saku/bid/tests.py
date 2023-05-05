@@ -41,6 +41,7 @@ class BidTest(APITestCase):
             is_private=False,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction.tags.set(tags)
         self.auction.save()
@@ -55,6 +56,7 @@ class BidTest(APITestCase):
             is_private=True,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction2.tags.set(tags)
         self.auction2.save()
@@ -69,6 +71,7 @@ class BidTest(APITestCase):
             is_private=False,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction2.tags.set(tags)
         self.auction2.save()
@@ -260,6 +263,7 @@ class BidUserDeleteTest(TestCase):
             is_private=False,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction.tags.set(tags)
         self.auction.save()

@@ -32,6 +32,7 @@ class CommentTest(APITestCase):
             is_private=True,
             user=self.user,
             category=category,
+            city = self.city1,
         )
         self.auction.tags.set(tags)
         self.auction.save()
