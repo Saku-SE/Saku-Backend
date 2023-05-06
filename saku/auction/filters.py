@@ -15,6 +15,7 @@ class AuctionListFilter(filters.FilterSet):
     finished = filters.Filter(method="finished__tf")
     is_online = filters.BooleanFilter(field_name="is_online")
     desc = filters.CharFilter(field_name="description", lookup_expr="contains")
+    city = filters.NumberFilter(field_name="city__id", lookup_expr="exact")
 
     def mode__exact(self, queryset, value, *args, **kwargs):
         try:
@@ -53,4 +54,4 @@ class AuctionListFilter(filters.FilterSet):
     
     class Meta:
         model = Auction
-        fields = ['username', 'name', 'mode', 'category', 'tags', 'limit', 'finished', 'is_online', 'desc']
+        fields = ['username', 'name', 'mode', 'category', 'tags', 'limit', 'finished', 'is_online', 'desc', 'city']
