@@ -53,6 +53,7 @@ class GetAuctionRequestSerializer(serializers.ModelSerializer):
     tags = TagSerializer(read_only=True, many=True)
     user = GeneralProfileSerializer()
     best_bid = serializers.SerializerMethodField()
+    city = serializers.SerializerMethodField()
 
     class Meta:
         model = Auction
@@ -73,7 +74,8 @@ class GetAuctionRequestSerializer(serializers.ModelSerializer):
             "show_best_bid",
             "best_bid",
             "auction_image",
-            "is_online"
+            "is_online",
+            "city"
         )
 
     def __init__(self, *args, **kwargs):
@@ -83,6 +85,9 @@ class GetAuctionRequestSerializer(serializers.ModelSerializer):
     def get_serializer_context(self):
         context = {"request": self.context.get("request")}
         return context
+    
+    def get_city(self, obj):
+        return {"id": obj.city.id, "name": obj.city.name}
 
     def get_best_bid(self, obj):
         # if not None is same as finish time not arrived yet
