@@ -150,3 +150,50 @@ class UnfollowUserProfile(generics.DestroyAPIView):
         follow_relation.delete()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
+    
+
+class WalletInfoView(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        wallet = Profile.objects.filter(user=request.user)[0].wallet
+        response = {
+            "status": "success",
+            "code": status.HTTP_200_OK,
+            "data": {
+                "wallet": wallet
+            }
+        }
+        return Response(response, status=status.HTTP_200_OK)
+    
+class ChargeWalletView(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        if not "charge_amount" in request.data:
+            return Response({
+                "message": "Invalid data",
+                "detail": {
+                    "charge_amount": "This field is required.",
+                }
+            }, status=status.HTTP_400_BAD_REQUEST)
+        charge_amount = request.data["charge_amount"]
+        if charge_amount < 1:
+            return Response({
+                "message": "Invalid value",
+                "detail": {
+                    "charge_amount": "Only greater or equal to 1 values are accepted for this field.",
+                }
+            }, status=status.HTTP_400_BAD_REQUEST)
+        profile = Profile.objects.filter(user=request.user)[0]
+        final_charge_value = int(charge_amount)
+        profile.wallet += final_charge_value
+        profile.save()
+        return Response({
+            "status": "success",
+            "code": status.HTTP_200_OK,
+            "data": {
+                "charged_amount": final_charge_value,
+                "wallet": profile.wallet
+            }
+        }, status=status.HTTP_200_OK)
