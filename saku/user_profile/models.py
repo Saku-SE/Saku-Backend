@@ -25,6 +25,13 @@ def photo_path(instance, filename):
     )
 
 
+class Subscription(models.Model):
+    name = models.CharField(max_length=40, blank=False, null=False, unique=True)
+    description = models.CharField(max_length=200, blank=True)
+    duration = models.IntegerField(null=False, blank=False) # duration in number of days
+    price = models.IntegerField(null=False, blank=False)
+
+
 class Profile(models.Model):
     TYPE_CHOICES = (("N", "natural"), ("L", "legal"))
 
@@ -42,6 +49,7 @@ class Profile(models.Model):
     address = models.CharField(max_length=50, blank=True)
     profile_image = models.ImageField(upload_to=photo_path, null=True, blank=True)
     wallet = models.IntegerField(default=0, null=False, blank=False)
+    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, default=None, null=True)
 
     def __str__(self):
         return self.name
