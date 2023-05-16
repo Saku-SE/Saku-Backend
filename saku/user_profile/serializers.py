@@ -15,8 +15,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Another user exists with this email address."
             )
-        return email
-
+        return email   
 
 class GeneralProfileSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()

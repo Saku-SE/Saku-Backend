@@ -1,9 +1,10 @@
 from django.urls import path
 
-from .views import DeleteProfilePicture, UpdateProfile, FollowUserProfile, DetailedGeneralProfileInfo, UnfollowUserProfile
+from .views import DeleteProfilePicture, UpdateProfile, FollowUserProfile, DetailedGeneralProfileInfo, UnfollowUserProfile, PersonalProfileInfo
 
 app_name = "user_profile"
 urlpatterns = [
+    path("", PersonalProfileInfo.as_view(), name="personal_profile"),
     path("update/", UpdateProfile.as_view(), name="update_profile"),
     path(
         "delete/picture/", DeleteProfilePicture.as_view(), name="delete_profile_image"
