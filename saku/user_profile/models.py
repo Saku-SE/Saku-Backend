@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
 from django.db import models
+from subscription.models import Subscription
 
 phone_validator = RegexValidator(
     regex=r"^09\d{9}$", message="Phone number is invalid (.eg '09123456789')"
@@ -23,13 +24,6 @@ def photo_path(instance, filename):
     return "images/profile_images/{randomstring}{ext}".format(
         randomstring=randomstr, ext=file_extension
     )
-
-
-class Subscription(models.Model):
-    name = models.CharField(max_length=40, blank=False, null=False, unique=True)
-    description = models.CharField(max_length=200, blank=True)
-    duration = models.IntegerField(null=False, blank=False) # duration in number of days
-    price = models.IntegerField(null=False, blank=False)
 
 
 class Profile(models.Model):
