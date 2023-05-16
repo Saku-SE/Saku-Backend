@@ -41,6 +41,7 @@ class Profile(models.Model):
     province = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=50, blank=True)
     profile_image = models.ImageField(upload_to=photo_path, null=True, blank=True)
+    wallet = models.IntegerField(default=0, null=False, blank=False)
 
     def __str__(self):
         return self.name
