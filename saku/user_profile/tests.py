@@ -211,7 +211,7 @@ class ProfileTest(APITestCase):
 
     def test_charge_wallet_success(self):
         url = reverse("user_profile:charge-wallet")
-        response = self.client.post(url, data={"charge_amount": 10})
+        response = self.client.post(url, data={'charge_amount': 10}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["data"]["wallet"], 10)
@@ -219,7 +219,7 @@ class ProfileTest(APITestCase):
 
     def test_charge_wallet_success_decimal_value(self):
         url = reverse("user_profile:charge-wallet")
-        response = self.client.post(url, data={"charge_amount": 10.5})
+        response = self.client.post(url, data={"charge_amount": 10.5}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["data"]["wallet"], 10)
@@ -230,7 +230,7 @@ class ProfileTest(APITestCase):
         response = self.client.post(url, data={"invalid_key": ""})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data["data"], {
+        self.assertEqual(response.data, {
                 "message": "Invalid data",
                 "detail": {
                     "charge_amount": "This field is required.",
@@ -238,10 +238,10 @@ class ProfileTest(APITestCase):
     
     def test_charge_wallet_invalid_value_lt_1(self):
         url = reverse("user_profile:charge-wallet")
-        response = self.client.post(url, data={"charge_amount": 0.5})
+        response = self.client.post(url, data={"charge_amount": 0.5}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data["data"], {
+        self.assertEqual(response.data, {
             "message": "Invalid value",
             "detail": {
                 "charge_amount": "Only greater or equal to 1 values are accepted for this field.",
