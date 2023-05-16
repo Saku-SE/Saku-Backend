@@ -16,7 +16,7 @@ urlpatterns = [
     path("", CreateListAuction.as_view(), name="auction"),
     path("categories/", CategoryList.as_view()),
     path("<str:token>", DetailedAuction.as_view(), name="detailed_auction"),
-    path("<int:limit>", RecentAuctionsView.as_view(), name="recent_auctions"),
+    path("recent/<int:limit>", RecentAuctionsView.as_view(), name="recent_auctions"),
     path(
         "remove-picture/<str:token>",
         DeleteAuctionPicture.as_view(),
