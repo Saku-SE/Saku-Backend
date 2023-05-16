@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Profile, FollowRelationship
-from .serializers import ProfileSerializer, CreateFollowRelationSerializer
+from .serializers import ProfileSerializer, CreateFollowRelationSerializer, PersonalProfileSerializer
 from django.shortcuts import get_object_or_404
 
 
@@ -59,7 +59,7 @@ class PersonalProfileInfo(generics.RetrieveAPIView):
 
     def get(self, request):
         profile_info = Profile.objects.filter(user=request.user)[0]
-        serializer = ProfileSerializer(profile_info)
+        serializer = PersonalProfileSerializer(profile_info)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
