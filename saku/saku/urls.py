@@ -31,6 +31,7 @@ urlpatterns = [
     path("homepage/", include("homepage.urls")),
     path("chat/", include("chat.urls")),
     path("support/", include("support.urls")),
+    path("subscription/", include("subscription.urls")),
 ]
 
 # url for user profile images:
