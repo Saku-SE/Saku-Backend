@@ -44,4 +44,19 @@ class PurchaseSubscriptionView(generics.GenericAPIView):
                 "left_time_in_days": 30, 
             }
         }, status=status.HTTP_200_OK)
+    
+class UserActiveSubscriptionInfoView(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        profile = Profile.objects.get(user=request.user)
+        active_subscription = profile.subscription
+        if active_subscription is None:
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        return Response({
+            "id": active_subscription.id,
+            "name": active_subscription.name,
+            "usage_limit": active_subscription.usage_limit,
+            "left_time_in_days": 30 - (datetime.datetime.now() - profile.subscription_date).day
+        }, status=status.HTTP_200_OK)
 
