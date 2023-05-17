@@ -6,6 +6,7 @@ from user_profile.models import Profile
 from .serializers import SubscriptionSerializer
 from django.shortcuts import get_object_or_404
 import datetime
+from django.db import transaction
 
 class SubscriptionListView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
@@ -23,9 +24,17 @@ class PurchaseSubscriptionView(generics.GenericAPIView):
                 "detail": "You have an already active purchase."
             }, status=status.HTTP_400_BAD_REQUEST)
         subscription = get_object_or_404(Subscription, id=request.data['id'])
-        profile.subscription = subscription
-        profile.subscription_date = datetime.datetime.now()
-        profile.save()
+        if profile.wallet < subscription.price:
+            return Response({
+                "message": "Insufficient funds",
+                "detail": "You don't have enough credit in your wallet"
+            })
+        
+        with transaction.atomic():
+            profile.wallet -= subscription.price
+            profile.subscription = subscription
+            profile.subscription_date = datetime.datetime.now()
+            profile.save()
         return Response({
             "status": "success",
             "code": status.HTTP_200_OK,
