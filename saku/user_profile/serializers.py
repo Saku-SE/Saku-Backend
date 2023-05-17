@@ -41,7 +41,7 @@ class PersonalProfileSerializer(serializers.ModelSerializer):
         }
     
     def get_subscription_left_days(self, obj: Profile):
-        return 30 - (datetime.datetime.now() - obj.subscription_date).day
+        return 30 - (datetime.datetime.now().date() - obj.subscription_date.date()).days
 
 
 class GeneralProfileSerializer(serializers.ModelSerializer):

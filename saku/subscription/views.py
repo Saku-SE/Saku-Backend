@@ -57,6 +57,6 @@ class UserActiveSubscriptionInfoView(generics.GenericAPIView):
             "id": active_subscription.id,
             "name": active_subscription.name,
             "usage_limit": active_subscription.usage_limit,
-            "left_time_in_days": 30 - (datetime.datetime.now() - profile.subscription_date).day
+            "left_time_in_days": 30 - (datetime.datetime.now().date() - profile.subscription_date.date()).days
         }, status=status.HTTP_200_OK)
 
