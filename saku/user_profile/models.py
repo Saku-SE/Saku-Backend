@@ -44,6 +44,8 @@ class Profile(models.Model):
     profile_image = models.ImageField(upload_to=photo_path, null=True, blank=True)
     wallet = models.IntegerField(default=0, null=False, blank=False)
     subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, default=None, null=True)
+    subscription_date = models.DateTimeField(null=True, blank=True, default=None)
+
 
     def __str__(self):
         return self.name
