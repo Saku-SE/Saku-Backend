@@ -28,7 +28,7 @@ class PurchaseSubscriptionView(generics.GenericAPIView):
             return Response({
                 "message": "Insufficient funds",
                 "detail": "You don't have enough credit in your wallet"
-            })
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         with transaction.atomic():
             profile.wallet -= subscription.price
@@ -43,5 +43,5 @@ class PurchaseSubscriptionView(generics.GenericAPIView):
                 "usage_limit": subscription.usage_limit,
                 "left_time_in_days": 30, 
             }
-        })
+        }, status=status.HTTP_200_OK)
 
