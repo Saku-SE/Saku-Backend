@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Profile, FollowRelationship
+import datetime
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -19,6 +20,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class PersonalProfileSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
+    subscription = serializers.SerializerMethodField()
+    subscription_left_days = serializers.SerializerMethodField()
+
     class Meta:
         model = Profile
         fields = "__all__"
@@ -28,6 +32,16 @@ class PersonalProfileSerializer(serializers.ModelSerializer):
             "id": obj.user.id,
             "username": obj.user.username,
         }
+    
+    def get_subscription(self, obj):
+        return {
+            "id": obj.subscription.id,
+            "name": obj.subscription.name,
+            "usage_limit": obj.subscription.usage_limit,
+        }
+    
+    def get_subscription_left_days(self, obj):
+        return 30 - (datetime.datetime.now() - obj.subscription_date).day
 
 
 class GeneralProfileSerializer(serializers.ModelSerializer):
