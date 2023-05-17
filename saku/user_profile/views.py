@@ -54,12 +54,22 @@ class DeleteProfilePicture(generics.GenericAPIView):
             {"message": "Profile picture deleted"}, status=status.HTTP_200_OK
         )
 
-class PersonalProfileInfo(generics.RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
+class PersonalProfileInfo(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile_info = Profile.objects.filter(user=request.user)[0]
-        serializer = PersonalProfileSerializer(profile_info)
+        print(request)
+        user = request.user
+        profile_info = Profile.objects.filter(user=user)[0]
+        # print(len(profile_info))
+        # print(profile_info)
+        # profile_info = profile_info[0]
+        print("A")
+        print(type(profile_info))
+        print(profile_info)
+        # print(profile_info.user.username)
+        serializer = PersonalProfileSerializer(data=profile_info)
+        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
