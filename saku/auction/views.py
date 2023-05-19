@@ -243,3 +243,15 @@ class AuctionsByCityView(generics.ListAPIView):
         }
         return Response(response, status=status.HTTP_200_OK)
                 
+class RecentAuctionsView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request, limit):
+        recent_auctions = Auction.objects.order_by('-created_at')
+        if len(recent_auctions) > limit:
+            recent_auctions = recent_auctions[:limit]
+        serializer = GetAuctionRequestSerializer(
+            recent_auctions, many=True, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        

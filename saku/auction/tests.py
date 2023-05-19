@@ -176,6 +176,12 @@ class GetAuctionTest(APITestCase):
         self.assertIn(
             ErrorDetail(string="Not found.", code="not_found"), response.data["detail"]
         )
+    
+    def test_get_recent_auctions_list(self):
+        response = self.client.get(path="/auction/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(2, len(response.data))
+        self.assertEqual("auction2", response.data[0]["name"])
 
 
 class EditAuctionTest(APITestCase):
