@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
 from django.db import models
+from subscription.models import Subscription
 
 phone_validator = RegexValidator(
     regex=r"^09\d{9}$", message="Phone number is invalid (.eg '09123456789')"
@@ -41,6 +42,10 @@ class Profile(models.Model):
     province = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=50, blank=True)
     profile_image = models.ImageField(upload_to=photo_path, null=True, blank=True)
+    wallet = models.IntegerField(default=0, null=False, blank=False)
+    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, default=None, null=True)
+    subscription_date = models.DateTimeField(null=True, blank=True, default=None)
+
 
     def __str__(self):
         return self.name

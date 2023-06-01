@@ -61,7 +61,8 @@ INSTALLED_APPS = [
     "comment",
     "homepage",
     "chat",
-    "support"
+    "support",
+    "subscription",
 ]
 
 MIDDLEWARE = [
