@@ -4,8 +4,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Profile, FollowRelationship
-from .serializers import ProfileSerializer, CreateFollowRelationSerializer, PersonalProfileSerializer
+from .models import Profile, FollowRelationship, Ticket
+from .serializers import ProfileSerializer, CreateFollowRelationSerializer, PersonalProfileSerializer, TicketSerializer
 from django.shortcuts import get_object_or_404
 
 
@@ -207,3 +207,31 @@ class ChargeWalletView(generics.GenericAPIView):
                 "wallet": profile.wallet
             }
         }, status=status.HTTP_200_OK)
+    
+
+class GetTicketsList(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        tickets = Ticket.objects.filter(user=request.user)
+        serializer = TicketSerializer(tickets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class GetTicket(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, ticket_id):
+        tickets = Ticket.objects.filter(user=request.user)
+        targeted_ticket = get_object_or_404(tickets, id=ticket_id)
+        serializer = TicketSerializer(targeted_ticket)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class CreateTicket(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        sent_question = request.data["question"]
+        Ticket.objects.create(question=sent_question, user=request.user)
+        return Response(status=status.HTTP_201_CREATED)
