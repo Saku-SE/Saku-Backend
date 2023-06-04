@@ -26,6 +26,13 @@ def photo_path(instance, filename):
     )
 
 
+class Ticket(models.Model):
+    question = models.CharField(max_length=300)
+    answer = models.CharField(max_length=300, default="")
+    has_read = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 class Profile(models.Model):
     TYPE_CHOICES = (("N", "natural"), ("L", "legal"))
 
