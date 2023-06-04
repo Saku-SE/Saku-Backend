@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Profile, FollowRelationship
+from .models import Profile, FollowRelationship, Ticket
 import datetime
 
 
@@ -83,3 +83,10 @@ class CreateFollowRelationSerializer(serializers.ModelSerializer):
     # def create(validated_data):
     #     instance = FollowRelationship.objects.create(**validated_data)
     #     return instance
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = "__all__"
+    
