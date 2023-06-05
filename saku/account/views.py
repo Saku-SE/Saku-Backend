@@ -9,6 +9,9 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from user_profile.models import Profile
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from django.http import JsonResponse
 
 from saku.settings import EMAIL_HOST_USER
 
@@ -110,3 +113,39 @@ class ForgotPassword(generics.GenericAPIView):
             }
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class EasyGoogleLogin(generics.GenericAPIView):
+    permission_classes = (AllowAny,)
+    def post(self, request):
+        # Get the ID token from the request
+        id_token = request.POST.get('id_token')
+    
+         # Verify the ID token with Google
+        try:
+            #todo Specify the CLIENT_ID of the app that accesses the backend:
+            idinfo = id_token.verify_oauth2_token(id_token, requests.Request(), CLIENT_ID)
+        
+            # Get user info from the ID token
+            email = idinfo['email']
+            name = idinfo['name']
+
+            # Check that the ID token is issued by Google
+            if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+                raise ValueError('Wrong issuer.')
+
+            # Return the user ID
+            sub = idinfo['sub']
+            profiles = Profile.objects.filter(google_sub=sub)
+            if len(profiles) <= 0:
+                # create user account
+                user = User.objects.create(
+                username=validated_data["username"], email=validated_data["email"])
+                # create user profile
+                Profile.objects.create(user=user, national_id="0", email=user.email)
+        
+            # Return a JSON response with user info
+            return JsonResponse({'email': email, 'name': name})
+        except ValueError:
+            return JsonResponse({'error': 'Invalid ID token.'})
+        

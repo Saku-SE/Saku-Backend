@@ -45,6 +45,7 @@ class Profile(models.Model):
     wallet = models.IntegerField(default=0, null=False, blank=False)
     subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, default=None, null=True)
     subscription_date = models.DateTimeField(null=True, blank=True, default=None)
+    google_sub = models.CharField(null=True, blank=True)
 
 
     def __str__(self):
